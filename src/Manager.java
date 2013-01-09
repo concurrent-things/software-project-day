@@ -6,4 +6,23 @@
 
 public class Manager {
 
+	/**
+	 * 
+	 */
+	public Manager(){
+		
+	}
+	
+	public void requestMeeting(){
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public void askQuestion(){
+		
+	}
+	
+	
 }
