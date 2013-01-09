@@ -9,7 +9,19 @@ public abstract class Employee extends Thread {
 		activeTaskQueue.add(newActiveTask);
 	}
 	
-	public abstract void registerDaysEvents();
+	protected abstract void registerDaysEvents();
 
-
+	/**
+	 * TODO: Concurrency issues between checking queue and doing stuff
+	 */
+	public void run() {
+		while (true) {
+			try {
+				wait();
+				activeTaskQueue.poll().run();
+			} catch (InterruptedException e) {
+				// Day is over. Run will now terminate automatically
+			}
+		}
+	}
 }
