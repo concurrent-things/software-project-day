@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class Employee extends Thread {
 
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
-	
+	private Scheduler scheduler;
 	// Runnables
 	
 	// TODO: This isn't done- it's just an example
@@ -21,7 +21,9 @@ public abstract class Employee extends Thread {
 		
 	};
 	
-	
+	public Employee(Scheduler scheduler) {
+		this.scheduler = scheduler;
+	}
 	
 	
 	public void enqueueTask(Runnable newActiveTask) {
