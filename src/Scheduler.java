@@ -2,7 +2,9 @@
 public class Scheduler {
 
 	
-	
+	public void registerEvent(Runnable event, Employee employee, long millisFromNow) {
+		
+	}
 	
 	
 	
