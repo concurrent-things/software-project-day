@@ -4,7 +4,7 @@
  * @author Jonathon Shippling <jjs5471@rit.edu>
  */
 
-public class Manager {
+public class Manager extends Employee{
 
 	/**
 	 * 
@@ -12,17 +12,13 @@ public class Manager {
 	public Manager(){
 		
 	}
-	
-	public void requestMeeting(){
+
+	@Override
+	protected void registerDaysEvents() {
+		// TODO Auto-generated method stub
 		
 	}
 	
-	/**
-	 * 
-	 */
-	public void askQuestion(){
-		
-	}
 	
 	
 }
