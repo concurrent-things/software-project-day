@@ -26,4 +26,10 @@ public class Developer extends Employee{
 	public void run() { 
 		
 	}
+
+	@Override
+	protected void registerDaysEvents(Scheduler scheduler) {
+		// TODO Auto-generated method stub
+		
+	}
 }
