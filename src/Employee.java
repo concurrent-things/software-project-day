@@ -1,11 +1,13 @@
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Semaphore;
 
 
 public abstract class Employee extends Thread {
 
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
 	private Scheduler scheduler;
-	private Object lock = new Object();
+	private final Object newItemLock = new Object();
+	private final Semaphore ensureEnqueueAndNotifySemaphore = new Semaphore(1);
 	
 	// Runnables
 	
@@ -18,9 +20,7 @@ public abstract class Employee extends Thread {
 			} catch (InterruptedException e) {
 				
 			}
-			
 		}
-		
 	};
 	
 	public Employee(Scheduler scheduler) {
@@ -29,11 +29,19 @@ public abstract class Employee extends Thread {
 	
 	
 	public void enqueueTask(Runnable newActiveTask) {
-		// lock.aquire
-		synchronized (lock) {
-			activeTaskQueue.add(newActiveTask);
-			notify();
+		try {
+			/* ensure this thread enqueues a new item, notifies
+			 * the employee thread, and that the employee thread
+			 * removes the new item prior to allowing other threads
+			 * to enqueue additional items
+			 */
+			ensureEnqueueAndNotifySemaphore.acquire();
+			
+		} catch (InterruptedException e) {
+			System.err.println("The scheduler thread has been unexpectedly interrupted.");
 		}
+		activeTaskQueue.add(newActiveTask);
+		newItemLock.notify();
 	}
 	
 	protected abstract void registerDaysEvents(Scheduler scheduler);
@@ -44,11 +52,12 @@ public abstract class Employee extends Thread {
 	public void run() {
 		try {
 			while (true) {	
-				wait();
-				synchronized (lock) {
-					activeTaskQueue.poll().run();
-				}
-				// lock.release
+				newItemLock.wait();
+				
+				activeTaskQueue.poll().run();
+				
+				/* allow other threads to enqueue new tasks once more */
+				ensureEnqueueAndNotifySemaphore.release();	
 				
 			}	
 		} catch (InterruptedException e) {
