@@ -27,6 +27,7 @@ public abstract class Employee extends Thread {
 		this.scheduler = scheduler;
 	}
 	
+	public abstract void listenToAnswer(Employee relayTo);
 	
 	public void enqueueTask(Runnable newActiveTask) {
 		try {
@@ -40,6 +41,12 @@ public abstract class Employee extends Thread {
 			binarySemaphore.release();
 			newItemLock.notify();
 		}
+	}
+	
+	public abstract void askQuestion(Employee relayedFrom);
+	
+	public void registerSpontaneousTask(Runnable r) {
+		scheduler.registerEvent(r, this, 10);
 	}
 	
 	protected abstract void registerDaysEvents(Scheduler scheduler);

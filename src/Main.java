@@ -11,10 +11,10 @@ public class Main {
 
 		// 3 teams of developers consisting of 1 lead and 3 devs
 		for (int i = 1; i <= 3; i++) {
-			TeamLeader teamLead = new TeamLeader(scheduler, i, 1);
-			Developer dev1 = new Developer(scheduler, i, 2);
-			Developer dev2 = new Developer(scheduler, i, 3);
-			Developer dev3 = new Developer(scheduler, i, 4);
+			TeamLeader teamLead = new TeamLeader(scheduler, manager1, i, 1);
+			Developer dev1 = new Developer(scheduler, teamLead, i, 2);
+			Developer dev2 = new Developer(scheduler, teamLead, i, 3);
+			Developer dev3 = new Developer(scheduler, teamLead, i, 4);
 		}
 
 	}

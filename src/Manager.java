@@ -16,7 +16,21 @@ public class Manager extends Employee{
 
 	@Override
 	protected void registerDaysEvents(Scheduler scheduler) {
-		// TODO Auto-generated method stub
+		// TODO register the day's events
+		
+	}
+
+
+	@Override
+	public void listenToAnswer(Employee relayTo) {
+		// TODO Never will be called, because nobody knows more than the manager
+		
+	}
+
+
+	@Override
+	public void askQuestion(Employee relayedFrom) {
+		// TODO pause for 10 seconds
 		
 	}
 	
