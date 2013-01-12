@@ -8,7 +8,7 @@ public abstract class Employee extends Thread {
 	// Runnables
 	
 	// TODO: This isn't done- it's just an example
-	Runnable goToLunch = new Runnable() {
+	final Runnable goToLunch = new Runnable() {
 		@Override
 		public void run() {
 			try {
