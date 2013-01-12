@@ -5,6 +5,8 @@ public abstract class Employee extends Thread {
 
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
 	private Scheduler scheduler;
+	private Object lock = new Object();
+	
 	// Runnables
 	
 	// TODO: This isn't done- it's just an example
@@ -27,7 +29,11 @@ public abstract class Employee extends Thread {
 	
 	
 	public void enqueueTask(Runnable newActiveTask) {
-		activeTaskQueue.add(newActiveTask);
+		// lock.aquire
+		synchronized (lock) {
+			activeTaskQueue.add(newActiveTask);
+			notify();
+		}
 	}
 	
 	protected abstract void registerDaysEvents(Scheduler scheduler);
@@ -36,13 +42,17 @@ public abstract class Employee extends Thread {
 	 * TODO: Concurrency issues between checking queue and doing stuff
 	 */
 	public void run() {
-		while (true) {
-			try {
+		try {
+			while (true) {	
 				wait();
-				activeTaskQueue.poll().run();
-			} catch (InterruptedException e) {
+				synchronized (lock) {
+					activeTaskQueue.poll().run();
+				}
+				// lock.release
+				
+			}	
+		} catch (InterruptedException e) {
 				// Day is over. Run will now terminate automatically
-			}
 		}
 	}
 }
