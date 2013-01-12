@@ -7,7 +7,7 @@ public abstract class Employee extends Thread {
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
 	private Scheduler scheduler;
 	private final Object newItemLock = new Object();
-	private final Semaphore ensureEnqueueAndNotifySemaphore = new Semaphore(1);
+	private final Semaphore binarySemaphore = new Semaphore(1);
 	
 	// Runnables
 	
@@ -30,36 +30,41 @@ public abstract class Employee extends Thread {
 	
 	public void enqueueTask(Runnable newActiveTask) {
 		try {
-			/* ensure this thread enqueues a new item, notifies
-			 * the employee thread, and that the employee thread
-			 * removes the new item prior to allowing other threads
-			 * to enqueue additional items
-			 */
-			ensureEnqueueAndNotifySemaphore.acquire();
+			binarySemaphore.acquire();
 			
 		} catch (InterruptedException e) {
 			System.err.println("The scheduler thread has been unexpectedly interrupted.");
 		}
-		activeTaskQueue.add(newActiveTask);
-		newItemLock.notify();
+		
+		synchronized (newItemLock) {
+			activeTaskQueue.add(newActiveTask);
+			binarySemaphore.release();
+			newItemLock.notify();
+		}
 	}
 	
 	protected abstract void registerDaysEvents(Scheduler scheduler);
 
-	/**
-	 * TODO: Concurrency issues between checking queue and doing stuff
-	 */
 	public void run() {
 		try {
 			while (true) {	
-				newItemLock.wait();
+				boolean mustRelease = false;
+				while (!activeTaskQueue.isEmpty()) {
+					activeTaskQueue.poll().run();
+					
+					binarySemaphore.acquire();
+					if (activeTaskQueue.size() == 0) {
+						mustRelease = true;
+						break;
+					}
+					binarySemaphore.release();
+				}
 				
-				activeTaskQueue.poll().run();
-				
-				/* allow other threads to enqueue new tasks once more */
-				ensureEnqueueAndNotifySemaphore.release();	
-				
-			}	
+				synchronized (newItemLock) {
+					if (mustRelease) binarySemaphore.release();
+					newItemLock.wait();
+				}
+			}
 		} catch (InterruptedException e) {
 				// Day is over. Run will now terminate automatically
 		}
