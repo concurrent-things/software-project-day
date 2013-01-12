@@ -31,7 +31,6 @@ public abstract class Employee extends Thread {
 	public void enqueueTask(Runnable newActiveTask) {
 		try {
 			binarySemaphore.acquire();
-			
 		} catch (InterruptedException e) {
 			System.err.println("The scheduler thread has been unexpectedly interrupted.");
 		}

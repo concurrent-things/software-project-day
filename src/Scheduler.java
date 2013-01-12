@@ -2,15 +2,15 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Scheduler extends ScheduledThreadPoolExecutor {
-	private long startMillis;
+	private long startNanos;
 	
 	public Scheduler(int corePoolSize) {
 		super(corePoolSize);
-		this.startMillis = System.nanoTime();
+		this.startNanos = System.nanoTime();
 	}
 	
 	
-	public void registerEvent(final Runnable event, final Employee employee, long millisFromNow) {
+	public void registerEvent(final Runnable event, final Employee employee, long nanosFromNow) {
 		this.schedule(new Runnable(){
 
 			@Override
@@ -18,11 +18,11 @@ public class Scheduler extends ScheduledThreadPoolExecutor {
 				employee.enqueueTask(event);
 			}
 			
-		}, millisFromNow, TimeUnit.MILLISECONDS);
+		}, nanosFromNow, TimeUnit.NANOSECONDS);
 	}
 	
-	public long getStartTimeInMillis() {
-		return startMillis;
+	public long getStartTimeInNanos() {
+		return startNanos;
 	}
 	
 	
