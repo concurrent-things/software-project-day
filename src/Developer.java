@@ -57,7 +57,7 @@ public class Developer extends Employee{
 
 	@Override
 	public void askQuestion(Employee relayedFrom) {
-		// TODO Auto-generated method stub
+		// never will be called because nobody knows less than the developer
 		
 	}
 }

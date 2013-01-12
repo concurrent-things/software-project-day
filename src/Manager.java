@@ -23,7 +23,7 @@ public class Manager extends Employee{
 
 	@Override
 	public void listenToAnswer(Employee relayTo) {
-		// TODO Never will be called, because nobody knows more than the manager
+		// never will be called, because nobody knows more than the manager
 		
 	}
 
