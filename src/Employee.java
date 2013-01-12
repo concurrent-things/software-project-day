@@ -1,13 +1,19 @@
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 
-
+/**
+ * 
+ *
+ * @author Kevin Hartman <kfh6034@rit.edu>
+ */
 public abstract class Employee extends Thread {
 
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
 	private Scheduler scheduler;
 	private final Object newItemLock = new Object();
 	private final Semaphore binarySemaphore = new Semaphore(1);
+	private final Semaphore blockProcessing = new Semaphore(1);
+	private boolean isBlocking = false;
 	
 	// Runnables
 	
@@ -56,7 +62,9 @@ public abstract class Employee extends Thread {
 			while (true) {	
 				boolean mustRelease = false;
 				while (!activeTaskQueue.isEmpty()) {
+					blockProcessing.acquire(); // TODO: separate try catch, maybe with finally
 					activeTaskQueue.poll().run();
+					blockProcessing.release();
 					
 					binarySemaphore.acquire();
 					if (activeTaskQueue.size() == 0) {
@@ -74,5 +82,21 @@ public abstract class Employee extends Thread {
 		} catch (InterruptedException e) {
 				// Day is over. Run will now terminate automatically
 		}
+	}
+	
+	final protected void lockProcessing() {
+		if (isBlocking) return;
+		
+		try {
+			blockProcessing.acquire();
+			isBlocking = true;
+		} catch (InterruptedException e) {
+			System.err.println("Could not block employee processing.");
+		}
+	}
+	
+	final protected void unlockProcessing() {
+		if (!isBlocking) return;
+		blockProcessing.release();
 	}
 }

@@ -7,6 +7,7 @@ public class Developer extends Employee{
 	final Runnable askQuestion = new Runnable() {
 		@Override
 		public void run() {
+			Developer.this.lockProcessing();
 			teamLeader.registerSpontaneousTask(new Runnable() {
 
 				@Override
@@ -27,19 +28,11 @@ public class Developer extends Employee{
 		this.teamMemberNumber = teamMemberNumber; 
 	}
 	
-	public void askQuestion() { 	
-		
-	}
-	
 	public void goToLunch() { 
 		 	
 	}
 	
 	public void provideStatusUpdated() { 
-		
-	}
-	
-	public void run() { 
 		
 	}
 
@@ -51,7 +44,8 @@ public class Developer extends Employee{
 
 	@Override
 	public void listenToAnswer(Employee relayTo) {
-		// TODO print message about question being answered
+		// TODO print message about question being answered before unlocking
+		unlockProcessing();
 		
 	}
 

@@ -14,25 +14,38 @@ public class TeamLeader extends Employee{
 	}
 
 	@Override
-	public void listenToAnswer(Employee relayTo) {
-		relayTo.listenToAnswer(null);
+	public void listenToAnswer(final Employee relayTo) {
+		// print info before unlocking
+		unlockProcessing();
 		
+		relayTo.registerSpontaneousTask(new Runnable() {
+
+			@Override
+			public void run() {
+				relayTo.listenToAnswer(null);				
+			}
+			
+		});
 	}
 
 	@Override
 	public void askQuestion(final Employee relayedFrom) {
+		TeamLeader.this.lockProcessing();
+		
 		manager.registerSpontaneousTask(new Runnable() {
 
 			@Override
 			public void run() {
 				manager.askQuestion(TeamLeader.this);
-				TeamLeader.this.listenToAnswer(relayedFrom);
+				
+				TeamLeader.this.registerSpontaneousTask(new Runnable() {
+
+					@Override
+					public void run() {
+						TeamLeader.this.listenToAnswer(relayedFrom);
+					}
+				});
 			}
-			
 		});
-		
 	}
-
-	
-
 }
