@@ -5,8 +5,8 @@ public class Developer extends Employee{
 	private int teamMemberNumber;
 	
 	
-	public Developer(int teamNumber, int teamMemberNumber) { 
-		
+	public Developer(Scheduler scheduler, int teamNumber, int teamMemberNumber) { 
+		super(scheduler);
 		this.teamNumber = teamNumber; 
 		this.teamMemberNumber = teamMemberNumber; 
 	}
