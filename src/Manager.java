@@ -10,7 +10,7 @@ public class Manager extends Employee{
 	 * 
 	 */
 	public Manager(Scheduler scheduler){
-		super(scheduler);
+		super(scheduler, null);
 	}
 
 
@@ -20,20 +20,20 @@ public class Manager extends Employee{
 		
 	}
 
-
 	@Override
-	public void listenToAnswer(Employee relayTo) {
-		// never will be called, because nobody knows more than the manager
+	protected boolean canAnswerQuestion() {
+		return true;
+	}
+	
+	@Override
+	protected void onQuestionAsked(Employee askedTo) {
+		// TODO Auto-generated method stub
 		
 	}
 
-
 	@Override
-	public void askQuestion(Employee relayedFrom) {
-		// TODO pause for 10 seconds
+	protected void onAnswerReceived(Employee receivedFrom) {
+		// TODO Auto-generated method stub
 		
-	}
-	
-	
-	
+	}	
 }

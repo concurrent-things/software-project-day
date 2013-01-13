@@ -1,10 +1,9 @@
 
+
 public class TeamLeader extends Employee{
-	private Manager manager;
 	
 	public TeamLeader(Scheduler scheduler, Manager manager, int teamNumber, int teamMemberNumber) {
-		super(scheduler);
-		this.manager = manager;
+		super(scheduler, manager);
 	}
 
 	@Override
@@ -14,38 +13,14 @@ public class TeamLeader extends Employee{
 	}
 
 	@Override
-	public void listenToAnswer(final Employee relayTo) {
-		// print info before unlocking
-		unlockProcessing();
+	protected void onQuestionAsked(Employee askedTo) {
+		// TODO Auto-generated method stub
 		
-		relayTo.registerSpontaneousTask(new Runnable() {
-
-			@Override
-			public void run() {
-				relayTo.listenToAnswer(null);				
-			}
-			
-		});
 	}
 
 	@Override
-	public void askQuestion(final Employee relayedFrom) {
-		TeamLeader.this.lockProcessing();
+	protected void onAnswerReceived(Employee receivedFrom) {
+		// TODO Auto-generated method stub
 		
-		manager.registerSpontaneousTask(new Runnable() {
-
-			@Override
-			public void run() {
-				manager.askQuestion(TeamLeader.this);
-				
-				TeamLeader.this.registerSpontaneousTask(new Runnable() {
-
-					@Override
-					public void run() {
-						TeamLeader.this.listenToAnswer(relayedFrom);
-					}
-				});
-			}
-		});
-	}
+	}	
 }

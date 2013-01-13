@@ -1,3 +1,5 @@
+import java.util.Random;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 
@@ -7,7 +9,7 @@ import java.util.concurrent.Semaphore;
  * @author Kevin Hartman <kfh6034@rit.edu>
  */
 public abstract class Employee extends Thread {
-
+	protected final Employee supervisor;
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
 	private Scheduler scheduler;
 	private final Object newItemLock = new Object();
@@ -16,6 +18,25 @@ public abstract class Employee extends Thread {
 	private boolean isBlocking = false;
 	
 	// Runnables
+	
+	final Runnable askQuestion = new Runnable() {
+		@Override
+		public void run() {
+			if (supervisor == null) return;
+			Employee.this.lockProcessing();
+			supervisor.registerSpontaneousTask(new Runnable() {
+
+				@Override
+				public void run() {
+					Stack<Employee> callStack = new Stack<Employee>();
+					callStack.add(Employee.this);
+					supervisor.askQuestion(callStack);
+				}
+				
+			});
+			Employee.this.onQuestionAsked(Employee.this.supervisor);
+		}
+	};
 	
 	// TODO: This isn't done- it's just an example
 	final Runnable goToLunch = new Runnable() {
@@ -29,11 +50,55 @@ public abstract class Employee extends Thread {
 		}
 	};
 	
-	public Employee(Scheduler scheduler) {
+	public Employee(Scheduler scheduler, Employee supervisor) {
 		this.scheduler = scheduler;
+		this.supervisor = supervisor;
 	}
 	
-	public abstract void listenToAnswer(Employee relayTo);
+	protected boolean canAnswerQuestion() {
+		return new Random().nextBoolean();
+	}
+	
+	public void askQuestion(final Stack<Employee> relayedFrom) {
+		if (supervisor == null || canAnswerQuestion()) {
+			relayedFrom.peek().registerSpontaneousTask(new Runnable() {
+
+				@Override
+				public void run() {
+					relayedFrom.pop().listenToAnswer(relayedFrom);
+				}
+			});
+			return;
+		}
+		
+		
+		Employee.this.lockProcessing();
+		
+		supervisor.registerSpontaneousTask(new Runnable() {
+
+			@Override
+			public void run() {
+				relayedFrom.push(Employee.this);
+				supervisor.askQuestion(relayedFrom);
+			}
+		});
+	}
+	
+	public void listenToAnswer(final Stack<Employee> relayTo) {
+		onAnswerReceived(this.supervisor);
+		unlockProcessing();
+		
+		if (relayTo.peek() == null) return;
+		
+		relayTo.peek().registerSpontaneousTask(new Runnable() {
+
+			@Override
+			public void run() {
+				relayTo.pop().listenToAnswer(relayTo);				
+			}
+			
+		});
+	}
 	
 	public void enqueueTask(Runnable newActiveTask) {
 		try {
@@ -48,8 +113,9 @@ public abstract class Employee extends Thread {
 			newItemLock.notify();
 		}
 	}
-	
-	public abstract void askQuestion(Employee relayedFrom);
+		
+	protected abstract void onQuestionAsked(Employee askedTo);
+	protected abstract void onAnswerReceived(Employee receivedFrom);
 	
 	public void registerSpontaneousTask(Runnable r) {
 		scheduler.registerEvent(r, this, 10);

@@ -1,6 +1,11 @@
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 
+ *
+ * @author Kevin Hartman <kfh6034@rit.edu>
+ */
 public class Scheduler extends ScheduledThreadPoolExecutor {
 	private long startNanos;
 	
@@ -24,8 +29,6 @@ public class Scheduler extends ScheduledThreadPoolExecutor {
 	public long getStartTimeInNanos() {
 		return startNanos;
 	}
-	
-	
 	
 	/**
 	 * @param args
