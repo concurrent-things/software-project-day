@@ -20,7 +20,7 @@ public abstract class Employee extends Thread {
 	
 	// Runnables
 	
-	final Runnable askQuestion = new Runnable() {
+	final protected Runnable askQuestion = new Runnable() {
 		@Override
 		public void run() {
 			if (supervisor == null) return;
@@ -40,7 +40,7 @@ public abstract class Employee extends Thread {
 	};
 	
 	// TODO: This isn't done- it's just an example
-	final Runnable goToLunch = new Runnable() {
+	final protected Runnable goToLunch = new Runnable() {
 		@Override
 		public void run() {
 			try {
@@ -60,7 +60,7 @@ public abstract class Employee extends Thread {
 		return new Random().nextBoolean();
 	}
 	
-	public void askQuestion(final Stack<Employee> relayedFrom) {
+	final public void askQuestion(final Stack<Employee> relayedFrom) {
 		if (supervisor == null || canAnswerQuestion()) {
 			relayedFrom.peek().resumeWithAnswer(new Runnable() {
 
@@ -85,7 +85,7 @@ public abstract class Employee extends Thread {
 		});
 	}
 	
-	public void listenToAnswer(final Stack<Employee> relayTo) {
+	final public void listenToAnswer(final Stack<Employee> relayTo) {
 		onAnswerReceived(this.supervisor);
 		
 		if (relayTo.peek() == null) return;
@@ -100,7 +100,7 @@ public abstract class Employee extends Thread {
 		});
 	}
 	
-	public void enqueueTask(Runnable newActiveTask) {
+	final public void enqueueTask(Runnable newActiveTask) {
 		try {
 			binarySemaphore.acquire();
 		} catch (InterruptedException e) {
@@ -118,11 +118,11 @@ public abstract class Employee extends Thread {
 	protected abstract void onQuestionAsked(Employee askedTo);
 	protected abstract void onAnswerReceived(Employee receivedFrom);
 	
-	public void registerSpontaneousTask(Runnable r) {
+	final public void registerSpontaneousTask(Runnable r) {
 		scheduler.registerEvent(r, this, 10);
 	}
 	
-	public void resumeWithAnswer(Runnable answer) {
+	final public void resumeWithAnswer(Runnable answer) {
 		try {
 			binarySemaphore.acquire();
 		} catch (InterruptedException e) {
@@ -147,7 +147,7 @@ public abstract class Employee extends Thread {
 	
 	protected abstract void registerDaysEvents(Scheduler scheduler);
 
-	public void run() {
+	final public void run() {
 		try {
 			while (true) {	
 				boolean mustRelease = false;
@@ -174,7 +174,7 @@ public abstract class Employee extends Thread {
 		}
 	}
 	
-	final protected void lockProcessing() {
+	final private void lockProcessing() {
 		if (isBlocking) return;
 		
 		try {
@@ -185,7 +185,7 @@ public abstract class Employee extends Thread {
 		}
 	}
 	
-	final protected void unlockProcessing() {
+	final private void unlockProcessing() {
 		if (!isBlocking) return;
 		blockProcessing.release();
 	}
