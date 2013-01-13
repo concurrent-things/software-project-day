@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -61,7 +62,7 @@ public abstract class Employee extends Thread {
 	
 	public void askQuestion(final Stack<Employee> relayedFrom) {
 		if (supervisor == null || canAnswerQuestion()) {
-			relayedFrom.peek().registerSpontaneousTask(new Runnable() {
+			relayedFrom.peek().resumeWithAnswer(new Runnable() {
 
 				@Override
 				public void run() {
@@ -86,7 +87,6 @@ public abstract class Employee extends Thread {
 	
 	public void listenToAnswer(final Stack<Employee> relayTo) {
 		onAnswerReceived(this.supervisor);
-		unlockProcessing();
 		
 		if (relayTo.peek() == null) return;
 		
@@ -105,6 +105,7 @@ public abstract class Employee extends Thread {
 			binarySemaphore.acquire();
 		} catch (InterruptedException e) {
 			System.err.println("The scheduler thread has been unexpectedly interrupted.");
+			return;
 		}
 		
 		synchronized (newItemLock) {
@@ -121,6 +122,29 @@ public abstract class Employee extends Thread {
 		scheduler.registerEvent(r, this, 10);
 	}
 	
+	public void resumeWithAnswer(Runnable answer) {
+		try {
+			binarySemaphore.acquire();
+		} catch (InterruptedException e) {
+			System.err.println("The scheduler thread has been unexpectedly interrupted.");
+			return;
+		}
+		
+		ConcurrentLinkedQueue<Runnable> queueBackup = new ConcurrentLinkedQueue<Runnable>();
+		
+		while (!activeTaskQueue.isEmpty()) {
+			queueBackup.offer(activeTaskQueue.poll());
+		}
+		
+		activeTaskQueue.offer(answer);
+		
+		while (!queueBackup.isEmpty()) {
+			activeTaskQueue.offer(queueBackup.poll());
+		}
+		
+		unlockProcessing();
+	}
+	
 	protected abstract void registerDaysEvents(Scheduler scheduler);
 
 	public void run() {
@@ -128,7 +152,7 @@ public abstract class Employee extends Thread {
 			while (true) {	
 				boolean mustRelease = false;
 				while (!activeTaskQueue.isEmpty()) {
-					blockProcessing.acquire(); // TODO: separate try catch, maybe with finally
+					blockProcessing.acquire(); // TODO: try catch finally
 					activeTaskQueue.poll().run();
 					blockProcessing.release();
 					
