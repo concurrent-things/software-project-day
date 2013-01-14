@@ -54,6 +54,7 @@ public abstract class Employee extends Thread {
 	public Employee(Scheduler scheduler, Employee supervisor) {
 		this.scheduler = scheduler;
 		this.supervisor = supervisor;
+		registerDaysEvents(scheduler);
 	}
 	
 	protected boolean canAnswerQuestion() {
