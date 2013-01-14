@@ -12,7 +12,7 @@ import java.util.concurrent.Semaphore;
 public abstract class Employee extends Thread {
 	protected final Employee supervisor;
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
-	private Scheduler scheduler;
+	protected Scheduler scheduler;
 	private final Object newItemLock = new Object();
 	private final Semaphore binarySemaphore = new Semaphore(1);
 	private final Semaphore blockProcessing = new Semaphore(1);
