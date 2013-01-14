@@ -12,7 +12,7 @@ import java.util.concurrent.Semaphore;
 public abstract class Employee extends Thread {
 	protected final Employee supervisor;
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
-	protected Scheduler scheduler;
+	private Scheduler scheduler;
 	private final Object newItemLock = new Object();
 	private final Semaphore binarySemaphore = new Semaphore(1);
 	private final Semaphore blockProcessing = new Semaphore(1);
@@ -90,7 +90,7 @@ public abstract class Employee extends Thread {
 		
 		if (relayTo.peek() == null) return;
 		
-		relayTo.peek().registerSpontaneousTask(new Runnable() {
+		relayTo.peek().resumeWithAnswer(new Runnable() {
 
 			@Override
 			public void run() {
