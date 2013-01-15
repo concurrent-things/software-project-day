@@ -5,7 +5,16 @@
  */
 
 public class Manager extends Employee{
+	final protected Runnable endOfDayLeave = new Runnable() {
 
+		public void run() {
+			System.out.println("Manager is leaving work.");
+			
+			//Throw an interrupt which states that this developer thread can now be terminated
+			//as the developer has now left. 
+			interrupt();
+		} 
+	};
 	/**
 	 * 
 	 */
@@ -44,7 +53,8 @@ public class Manager extends Employee{
 
 	@Override
 	protected void registerDaysEvents(Scheduler scheduler) {
-		// TODO register the day's events
+		scheduler.registerEvent(endOfDayLeave, this, 0);
+		
 
 	}
 
