@@ -14,6 +14,7 @@ public class Developer extends Employee{
 	private long devDayStartTime; 
 	private long devLunchTime; 
 	private long devDayEndTime; 
+	private long devLunchStart;
 	
 	/**
 	 * Developer Object Contructor 
@@ -38,9 +39,11 @@ public class Developer extends Employee{
 	final protected Runnable endOfDayLeave = new Runnable() {
 
 		public void run() {
-			
-			
 			System.out.println("Developer " + teamNumber + teamMemberNumber + " is leaving work.");
+			
+			//Throw an interrupt which states that this developer thread can now be terminated
+			//as the developer has now left. 
+			interrupt();
 		} 
 	};
 	
@@ -68,9 +71,15 @@ public class Developer extends Employee{
 	 */
 	private void calculateDevLunch() { 
 		
-		//Randomly generating time for lunch 
 		Random randomGen = new Random(); 
-		int randomLunchTime = randomGen.nextInt(600) + 300;
+		
+		//Randomly generating a time to go to lunch 
+		int randomLunchStartTime = randomGen.nextInt(100) + 1200 ;
+		devLunchStart = TimeUnit.NANOSECONDS.convert(randomLunchStartTime, TimeUnit.MILLISECONDS);
+		
+		
+		//Randomly generating total timefor lunch 
+		int randomLunchTime = randomGen.nextInt(300) + 300;
 		devLunchTime = TimeUnit.NANOSECONDS.convert(randomLunchTime, TimeUnit.MILLISECONDS);
 		
 	}
@@ -110,7 +119,7 @@ public class Developer extends Employee{
 	protected void registerDaysEvents(Scheduler scheduler) {
 		
 		scheduler.registerEvent(endOfDayLeave, this, devDayEndTime);
-		
+		scheduler.registerEvent(goToLunch, this, devLunchStart);
 	}
 
 	protected void onQuestionAsked(Employee askedTo) {
