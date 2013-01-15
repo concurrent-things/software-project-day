@@ -29,10 +29,10 @@ public class Developer extends Employee{
 		this.teamNumber = teamNumber; 
 		this.teamMemberNumber = teamMemberNumber; 
 		
-		//Register days event with scheduler. 
-		startDevTime();
-		calculateDevLunch();
-		calculateDevEndTime();
+		// WARING: The registerDaysEvents hook will be called before
+		// anything in this constructor. Therefore Initialization of timing
+		// needs to happen in that method.
+		
 	}
 	
 	//Runnables 
@@ -117,7 +117,10 @@ public class Developer extends Employee{
 	}
 
 	protected void registerDaysEvents(Scheduler scheduler) {
-		
+		//Register days event with scheduler. 
+		startDevTime();
+		calculateDevLunch();
+		calculateDevEndTime();
 		scheduler.registerEvent(endOfDayLeave, this, devDayEndTime);
 		scheduler.registerEvent(goToLunch, this, devLunchStart);
 	}
