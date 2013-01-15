@@ -153,7 +153,7 @@ public abstract class Employee extends Thread {
 			while (true) {	
 				boolean mustRelease = false;
 				while (!activeTaskQueue.isEmpty()) {
-					blockProcessing.acquire(); // TODO: try catch finally
+					blockProcessing.acquire(); // try catch finally
 					activeTaskQueue.poll().run();
 					blockProcessing.release();
 					
