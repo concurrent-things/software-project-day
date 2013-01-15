@@ -44,7 +44,8 @@ public abstract class Employee extends Thread {
 		@Override
 		public void run() {
 			try {
-				Thread.sleep(600L);
+				Random rand = new Random();
+				Thread.sleep((long)(300+300*rand.nextDouble()));
 			} catch (InterruptedException e) {
 				
 			}
