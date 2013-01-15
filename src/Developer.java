@@ -39,6 +39,8 @@ public class Developer extends Employee{
 
 		public void run() {
 			
+			
+			System.out.println("Developer " + teamNumber + teamMemberNumber + " is leaving work.");
 		} 
 	};
 	
@@ -47,6 +49,9 @@ public class Developer extends Employee{
 		
 		public void run() { 
 			
+			System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to lunch.");
+			
+			System.out.println("Developer " + teamNumber + teamMemberNumber + " has returned from lunch." );
 		}
 	};
 	
@@ -103,6 +108,8 @@ public class Developer extends Employee{
 	}
 
 	protected void registerDaysEvents(Scheduler scheduler) {
+		
+		scheduler.registerEvent(endOfDayLeave, this, devDayEndTime);
 		
 	}
 
