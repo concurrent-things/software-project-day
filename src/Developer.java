@@ -128,5 +128,6 @@ public class Developer extends Employee{
 
 	protected void onAnswerReceived(Employee receivedFrom) {
 		
+		System.out.println("Recieved an answer to question from " + receivedFrom.getName());
 	}
 }
