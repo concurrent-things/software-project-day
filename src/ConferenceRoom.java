@@ -1,31 +1,34 @@
+import java.util.concurrent.CyclicBarrier;
 
-public class ConferenceRoom {
 
-	private static ConferenceRoom cf;
+public class ConferenceRoom extends MeetingPlace {
 
-	private ConferenceRoom() {};
+	public ConferenceRoom(int numberOfAttendees) {
+		super(numberOfAttendees);
+	}
 
-	public static ConferenceRoom getConferenceRoom() {
-		if (cf == null) {
-			cf = new ConferenceRoom();
+	@Override
+	public void conductMeeting() {
+		System.out.println("The conference meeting has started.");
+		try {
+			Thread.sleep(400L); //TODO: correct sleeping time
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		return cf;
+		
 	}
 
-	public void conductMeeting(){
-
-
+	@Override
+	public void onLeaveRoom() {
+		System.out.println("<insert thread name here> left conference room.");
+		
 	}
 
-	public void enterRoom(){
-
-
-	}
-
-	public void leaveRoom(){
-
-
+	@Override
+	public void onEnterRoom() {
+		System.out.println("<insert thread name here> entered conference room");
+		
 	}
 
 
