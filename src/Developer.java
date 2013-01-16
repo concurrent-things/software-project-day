@@ -53,7 +53,12 @@ public class Developer extends Employee{
 		public void run() { 
 			
 			System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to lunch.");
-			
+			try {
+				sleep(devLunchTime);
+			} catch (InterruptedException e) {
+				System.out.println("Exception when developer trying to go to lunch.");
+				e.printStackTrace();
+			}
 			System.out.println("Developer " + teamNumber + teamMemberNumber + " has returned from lunch." );
 		}
 	};
@@ -67,6 +72,25 @@ public class Developer extends Employee{
 	}
 	
 	/** 
+	 * Method which generates a random number of questions. 
+	 */
+	private void scheduleRandomQuestion(Scheduler scheduler) {
+		
+		long timeToScheduleQuestions;
+		//Generate random number of questions to ask max is 10 questions. 
+		Random randomGen = new Random(); 
+		int questionsToAsk = randomGen.nextInt(10);
+		
+		
+		for (int i = 0; i < questionsToAsk; i++) { 
+		
+			timeToScheduleQuestions = randomGen.nextInt(8);
+			timeToScheduleQuestions = TimeUnit.NANOSECONDS.convert(timeToScheduleQuestions, TimeUnit.HOURS);
+			scheduler.registerEvent(askQuestion, this, timeToScheduleQuestions);
+		}
+	}
+	
+	/** 
 	 * Method that randomly generates a simulated lunch time period for the developer 
 	 */
 	private void calculateDevLunch() { 
@@ -74,14 +98,12 @@ public class Developer extends Employee{
 		Random randomGen = new Random(); 
 		
 		//Randomly generating a time to go to lunch 
-		int randomLunchStartTime = randomGen.nextInt(100) + 1200 ;
-		devLunchStart = TimeUnit.NANOSECONDS.convert(randomLunchStartTime, TimeUnit.MILLISECONDS);
-		
+		long randomLunchStartTime = randomGen.nextInt(250 - 240 + 1) + 240;
+		devLunchStart = TimeUnit.NANOSECONDS.convert(randomLunchStartTime, TimeUnit.MINUTES);
 		
 		//Randomly generating total timefor lunch 
-		int randomLunchTime = randomGen.nextInt(300) + 300;
-		devLunchTime = TimeUnit.NANOSECONDS.convert(randomLunchTime, TimeUnit.MILLISECONDS);
-		
+		int randomLunchTime = randomGen.nextInt(60 - 30 + 1) + 30;
+		devLunchTime = TimeUnit.NANOSECONDS.convert(randomLunchTime, TimeUnit.MINUTES);
 	}
 	
 	/**
@@ -111,20 +133,21 @@ public class Developer extends Employee{
 		
 		return teamMemberNumber; 
 	}
-	
-	public void provideStatusUpdated() { 
-		
-	}
 
 	protected void registerDaysEvents(Scheduler scheduler) {
+		
 		//Register days event with scheduler. 
 		startDevTime();
+		scheduleRandomQuestion(scheduler);
 		calculateDevLunch();
 		calculateDevEndTime();
 		scheduler.registerEvent(endOfDayLeave, this, devDayEndTime);
 		scheduler.registerEvent(goToLunch, this, devLunchStart);
 	}
 
+	/** 
+	 * Not required for developer. 
+	 */
 	protected void onQuestionAsked(Employee askedTo) {
 		
 	}
