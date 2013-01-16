@@ -1,6 +1,10 @@
 import java.util.Random;
 
 public class TeamLeader extends Employee{
+	private int teamNumber;
+	private int teamMemberNumber;
+	
+	private Runnable endOfDayLeave;
 	
 	private int teamNumber;
 	private int teamMemberNumber;
@@ -70,6 +74,8 @@ public class TeamLeader extends Employee{
 		this.teamNumber = teamNumber;
 		this.teamMemberNumber = teamMemberNumber;
 		this.setName("" + teamNumber + teamMemberNumber);
+		this.teamMemberNumber = teamMemberNumber;
+		this.teamNumber = teamNumber;
 		initRunnables();
 		registerDaysEvents(scheduler);
 		
@@ -102,8 +108,6 @@ public class TeamLeader extends Employee{
 			scheduler.registerEvent(askQuestion, this, (long)(Math.random() * leaveTime));
 			
 		}
-		
-		
 	}
 
 	@Override
@@ -115,9 +119,7 @@ public class TeamLeader extends Employee{
 
 	@Override
 	protected void onAnswerReceived(Employee receivedFrom) {
-
 		System.out.println("Team Leader " + this.getName() + " received an answer from " + receivedFrom.getName() + ".");		
-		
 	}
 	
 }
