@@ -55,8 +55,7 @@ public abstract class Employee extends Thread {
 	public Employee(Scheduler scheduler, Employee supervisor) {
 		this.scheduler = scheduler;
 		this.supervisor = supervisor;
-		initRunnables();
-		registerDaysEvents(scheduler);
+
 	}
 	
 	protected abstract void initRunnables();

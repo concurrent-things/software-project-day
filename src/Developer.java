@@ -34,9 +34,8 @@ public class Developer extends Employee{
 		this.teamNumber = teamNumber; 
 		this.teamMemberNumber = teamMemberNumber; 
 		
-		// WARING: The registerDaysEvents hook will be called before
-		// anything in this constructor. Therefore Initialization of timing
-		// needs to happen in that method.
+		initRunnables();
+		registerDaysEvents(scheduler);
 		
 	}
 	

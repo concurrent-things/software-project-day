@@ -4,6 +4,9 @@ public class TeamLeader extends Employee{
 	
 	public TeamLeader(Scheduler scheduler, Manager manager, int teamNumber, int teamMemberNumber) {
 		super(scheduler, manager);
+		
+		initRunnables();
+		registerDaysEvents(scheduler);
 	}
 
 	@Override

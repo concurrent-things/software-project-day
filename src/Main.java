@@ -12,8 +12,8 @@ public class Main {
 
 		// 3 teams of developers consisting of 1 lead and 3 devs
 		for (int i = 1; i <= 3; i++) {
-//			TeamLeader teamLead = new TeamLeader(scheduler, manager1, i, 1);
-//			teamLead.start();
+			TeamLeader teamLead = new TeamLeader(scheduler, manager1, i, 1);
+			teamLead.start();
 //			
 //			Developer dev1 = new Developer(scheduler, teamLead, i, 2);
 //			dev1.start();

@@ -37,6 +37,9 @@ public class Manager extends Employee{
 		super(scheduler, null);
 		registerDaysEvents(scheduler);
 		this.office = new Office(numTeamLeads, this);
+		
+		initRunnables();
+		registerDaysEvents(scheduler);
 	}
 
 	@Override
