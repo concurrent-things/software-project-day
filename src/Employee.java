@@ -71,6 +71,7 @@ public abstract class Employee extends Thread {
 					relayedFrom.pop().listenToAnswer(relayedFrom);
 				}
 			});
+			Employee.this.onQuestionAsked(supervisor);
 			return;
 		}
 		
@@ -85,6 +86,7 @@ public abstract class Employee extends Thread {
 				supervisor.askQuestion(relayedFrom);
 			}
 		});
+		Employee.this.onQuestionAsked(supervisor);
 	}
 	
 	final public void listenToAnswer(final Stack<Employee> relayTo) {
@@ -111,9 +113,13 @@ public abstract class Employee extends Thread {
 		}
 		
 		synchronized (newItemLock) {
-			activeTaskQueue.add(newActiveTask);
+			try {
+			activeTaskQueue.offer(newActiveTask);
 			binarySemaphore.release();
 			newItemLock.notify();
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
 		}
 	}
 		
@@ -173,6 +179,7 @@ public abstract class Employee extends Thread {
 			}
 		} catch (InterruptedException e) {
 				// Day is over. Run will now terminate automatically
+			System.out.println("TEST: Thread interrupted successfully.");
 		}
 	}
 	
