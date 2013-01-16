@@ -64,6 +64,9 @@ public class TeamLeader extends Employee{
 		super(scheduler, manager);
 		this.teamNumber = teamNumber;
 		this.teamMemberNumber = teamMemberNumber;
+		this.setName("" + teamNumber + teamMemberNumber);
+		initRunnables();
+		registerDaysEvents(scheduler);
 		
 	}
 	
