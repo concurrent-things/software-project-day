@@ -9,9 +9,9 @@ public class Office extends MeetingPlace {
 
 	@Override
 	public void conductMeeting() {
-		System.out.println("Manager " + manager + "'s office meeting has begun."); //TODO: manager needs name
+		System.out.println("Manager's office meeting has begun.");
 		try {
-			Thread.sleep(400L); //TODO: correct sleeping time
+			Thread.sleep(150L);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -20,13 +20,13 @@ public class Office extends MeetingPlace {
 
 	@Override
 	public void onLeaveRoom() {
-		System.out.println("<insert thread name here> left " + manager + "'s office.");
+		System.out.println(Thread.currentThread().getName()+" left the Manager's office.");
 		
 	}
 
 	@Override
 	public void onEnterRoom() {
-		System.out.println("<insert thread name here> entered " + manager + "'s office.");
+		System.out.println(Thread.currentThread().getName()+" entered the Manager's office.");
 		
 	}
 

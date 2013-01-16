@@ -16,7 +16,7 @@ public class ConferenceRoom extends MeetingPlace {
 	public void conductMeeting() {
 		System.out.println("The conference meeting has started.");
 		try {
-			Thread.sleep(400L); //TODO: correct sleeping time
+			Thread.sleep(150L);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,13 +62,13 @@ public class ConferenceRoom extends MeetingPlace {
 
 	@Override
 	public void onLeaveRoom() {
-		System.out.println("<insert thread name here> left conference room.");
+		System.out.println(Thread.currentThread().getName()+" left the conference room.");
 		
 	}
 
 	@Override
 	public void onEnterRoom() {
-		System.out.println("<insert thread name here> entered conference room");
+		System.out.println(Thread.currentThread().getName()+" entered the conference room");
 		
 	}
 
