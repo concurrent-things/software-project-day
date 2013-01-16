@@ -32,15 +32,26 @@ public class ConferenceRoom extends MeetingPlace {
 			if (Thread.currentThread() instanceof TeamLeader) {
 				roomKey.lock();
 				owner = Thread.currentThread();
-				nextGroup.notifyAll();
+				enteredMeeting = true;
+				
 				super.enterRoom();
-				nextGroup.notifyAll();
+				synchronized (nextGroup) { nextGroup.notifyAll(); }
+				
 				roomKey.unlock();
+				
 			} else if (Thread.currentThread() instanceof Developer) {
-				if (((Developer) Thread.currentThread()).getSupervisor() == owner) {
+				if (owner == null) {
+					continue;
+				} else if (((Developer) Thread.currentThread()).getSupervisor() == owner) {
+					enteredMeeting = true;
 					super.enterRoom();
 				} else {
-					nextGroup.wait();
+					try {
+						synchronized (nextGroup) { nextGroup.wait(); }
+					} catch (InterruptedException e) {
+						System.err.println("Interrupted while attempting to attend conference...");
+						return;
+					}
 				}
 			} else {	// not supposed to be in conf room
 				System.err.println("Perhaps a manager is in the conf room by accident.");
