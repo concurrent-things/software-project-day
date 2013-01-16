@@ -35,7 +35,7 @@ public class Manager extends Employee{
 	 */
 	public Manager(Scheduler scheduler, int numTeamLeads){
 		super(scheduler, null);
-		this.setName("M1");
+		this.setName("Manager");
 		this.office = new Office(numTeamLeads, this);
 		initRunnables();
 		registerDaysEvents(scheduler);
@@ -47,12 +47,7 @@ public class Manager extends Employee{
 			@Override
 			public void run(){
 				System.out.println("Manager goes to morning developer meeting");
-				// TODO wait for people to arrive
-				try{
-					Thread.sleep(manStatusMeetTime);
-				} catch (InterruptedException e){
-					
-				}
+				office.enterRoom();
 			}
 		};
 		
@@ -92,16 +87,17 @@ public class Manager extends Employee{
 		goToStatusUpdateMeeting = new Runnable(){
 			@Override
 			public void run() {
-				System.out.println("Manager is acquiring developers for the project"
-						+ " status update meeting");
-				// TODO acquire lock on conference room
-				try {
-					Thread.sleep(manStatusMeetTime);
-				} catch (InterruptedException e) {
-
-				}
-				System.out.println("Manager has adjourned project status update" +
-						" meeting");
+//				System.out.println("Manager is acquiring developers for the project"
+//						+ " status update meeting");
+//				// TODO acquire lock on conference room
+//				try {
+//					Thread.sleep(manStatusMeetTime);
+//				} catch (InterruptedException e) {
+//
+//				}
+//				System.out.println("Manager has adjourned project status update" +
+//						" meeting");
+				System.out.println("Manager is ");
 			}
 
 		};
@@ -128,6 +124,10 @@ public class Manager extends Employee{
 
 	}
 
+	public Office getOffice(){
+		return office;
+	}
+	
 	private void startManagerTime(){
 		// TODO do something?
 	}
