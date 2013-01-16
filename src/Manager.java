@@ -24,6 +24,12 @@ public class Manager extends Employee{
 	
 	private long manEndDayTime = 5400000000L;		//5:00 pm, unless a question in in	 his queue
 	
+	protected Runnable goToDevMeeting;
+	protected Runnable goToExecMeeting;
+	protected Runnable goToLunch; 
+	protected Runnable goToStatusUpdateMeeting;
+	protected Runnable endOfDayLeave;
+	
 	/**
 	 * 
 	 */
@@ -32,79 +38,81 @@ public class Manager extends Employee{
 		registerDaysEvents(scheduler);
 	}
 
-	final protected Runnable goToDevMeeting = new Runnable() {
-		@Override
-		public void run(){
-			System.out.println("Manager goes to morning developer meeting");
-			// TODO wait for people to arrive
-			try{
-				Thread.sleep(manStatusMeetTime);
-			} catch (InterruptedException e){
-				
+	@Override
+	protected void initRunnables() {
+		goToDevMeeting = new Runnable() {
+			@Override
+			public void run(){
+				System.out.println("Manager goes to morning developer meeting");
+				// TODO wait for people to arrive
+				try{
+					Thread.sleep(manStatusMeetTime);
+				} catch (InterruptedException e){
+					
+				}
 			}
-		}
-	};
-	
-	/**
-	 * Runnable for the scheduled meetings from 10-11 and 2-3
-	 */
-	final protected Runnable goToExecMeeting = new Runnable() {	
-		@Override
-		public void run(){
-			System.out.println("Manager goes to an Executive Meeting");
-			try {
-				Thread.sleep(manExecMeetTime);
-			} catch (InterruptedException e) {
-
-			}
-			System.out.println("Manager has left an Executive Meeting");
-		}
-	};
-
-
-	final protected Runnable goToLunch = new Runnable(){
-		@Override
-		public void run() {
-			System.out.println("Manager is going to lunch");
-			try {
-				Thread.sleep(manLunchTime);
-			} catch (InterruptedException e) {
-	
-			}
-			System.out.println("Manager has returned from lunch");
-		}
+		};
 		
-	};
-	/**
-	 * Runnable for the status update meeting taking place after 4 pm
-	 */
-	final protected Runnable goToStatusUpdateMeeting = new Runnable(){
-		@Override
-		public void run() {
-			System.out.println("Manager is acquiring developers for the project"
-					+ " status update meeting");
-			// TODO acquire lock on conference room
-			try {
-				Thread.sleep(manStatusMeetTime);
-			} catch (InterruptedException e) {
+		/**
+		 * Runnable for the scheduled meetings from 10-11 and 2-3
+		 */
+		goToExecMeeting = new Runnable() {	
+			@Override
+			public void run(){
+				System.out.println("Manager goes to an Executive Meeting");
+				try {
+					Thread.sleep(manExecMeetTime);
+				} catch (InterruptedException e) {
 
+				}
+				System.out.println("Manager has left an Executive Meeting");
 			}
-			System.out.println("Manager has adjourned project status update" +
-					" meeting");
-		}
-
-	};
-
-	final protected Runnable endOfDayLeave = new Runnable() {
-		public void run() {
-			System.out.println("Manager is leaving work.");
+		};
+		
+		goToLunch = new Runnable(){
+			@Override
+			public void run() {
+				System.out.println("Manager is going to lunch");
+				try {
+					Thread.sleep(manLunchTime);
+				} catch (InterruptedException e) {
+		
+				}
+				System.out.println("Manager has returned from lunch");
+			}
 			
-			//Throw an interrupt which states that this developer thread can now be terminated
-			//as the developer has now left. 
-			interrupt();
-		} 
-	};
+		};
+		
+		/**
+		 * Runnable for the status update meeting taking place after 4 pm
+		 */
+		goToStatusUpdateMeeting = new Runnable(){
+			@Override
+			public void run() {
+				System.out.println("Manager is acquiring developers for the project"
+						+ " status update meeting");
+				// TODO acquire lock on conference room
+				try {
+					Thread.sleep(manStatusMeetTime);
+				} catch (InterruptedException e) {
 
+				}
+				System.out.println("Manager has adjourned project status update" +
+						" meeting");
+			}
+
+		};
+		
+		endOfDayLeave = new Runnable() {
+			public void run() {
+				System.out.println("Manager is leaving work.");
+				
+				//Throw an interrupt which states that this developer thread can now be terminated
+				//as the developer has now left. 
+				interrupt();
+			} 
+		};
+	}	
 	
 	@Override
 	protected void registerDaysEvents(Scheduler scheduler) {
@@ -142,5 +150,7 @@ public class Manager extends Employee{
 	protected void onAnswerReceived(Employee receivedFrom) {
 		// Managers never receive answers, only ask questions
 		return;
-	}	
+	}
+
+
 }

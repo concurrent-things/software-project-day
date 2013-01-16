@@ -58,6 +58,8 @@ public abstract class Employee extends Thread {
 		registerDaysEvents(scheduler);
 	}
 	
+	protected abstract void initRunnables();
+	
 	protected boolean canAnswerQuestion() {
 		return new Random().nextBoolean();
 	}
