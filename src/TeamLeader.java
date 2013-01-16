@@ -21,5 +21,11 @@ public class TeamLeader extends Employee{
 	protected void onAnswerReceived(Employee receivedFrom) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	protected void initRunnables() {
+		// TODO Auto-generated method stub
+		
 	}	
 }
