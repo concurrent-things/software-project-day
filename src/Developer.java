@@ -56,10 +56,19 @@ public class Developer extends Employee{
 			try {
 				sleep(devLunchTime);
 			} catch (InterruptedException e) {
-				System.out.println("Exception when developer trying to go to lunch.");
+				System.out.println("Exception found when developer trying to go to lunch.");
 				e.printStackTrace();
 			}
 			System.out.println("Developer " + teamNumber + teamMemberNumber + " has returned from lunch." );
+		}
+	};
+	
+	final protected Runnable goToEndofDayMeeting = new Runnable() { 
+		
+		public void run() { 
+			
+			
+			System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to the end of the day meeting at conference room.");
 		}
 	};
 	
@@ -140,6 +149,8 @@ public class Developer extends Employee{
 
 	protected void registerDaysEvents(Scheduler scheduler) {
 		
+		long endofDayMeeting = TimeUnit.NANOSECONDS.convert(8, TimeUnit.HOURS);
+		
 		//Register days event with scheduler. 
 		startDevTime();
 		scheduleRandomQuestion(scheduler);
@@ -147,6 +158,7 @@ public class Developer extends Employee{
 		calculateDevEndTime();
 		scheduler.registerEvent(endOfDayLeave, this, devDayEndTime);
 		scheduler.registerEvent(goToLunch, this, devLunchStart);
+		scheduler.registerEvent(goToEndofDayMeeting, this, endofDayMeeting);
 	}
 
 	/** 
