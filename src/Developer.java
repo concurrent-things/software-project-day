@@ -77,11 +77,13 @@ public class Developer extends Employee{
 	private void scheduleRandomQuestion(Scheduler scheduler) {
 		
 		long timeToScheduleQuestions;
+		
 		//Generate random number of questions to ask max is 10 questions. 
 		Random randomGen = new Random(); 
 		int questionsToAsk = randomGen.nextInt(10);
 		
-		
+		//For the randomly generated number of questions to ask it generates 
+		//a random time to ask questions within the 8 hour work period. 
 		for (int i = 0; i < questionsToAsk; i++) { 
 		
 			timeToScheduleQuestions = randomGen.nextInt(8);
@@ -98,10 +100,12 @@ public class Developer extends Employee{
 		Random randomGen = new Random(); 
 		
 		//Randomly generating a time to go to lunch 
+		//It randomly selects a time between the hours of 12 and 1 in minutes. 
 		long randomLunchStartTime = randomGen.nextInt(250 - 240 + 1) + 240;
 		devLunchStart = TimeUnit.NANOSECONDS.convert(randomLunchStartTime, TimeUnit.MINUTES);
 		
 		//Randomly generating total timefor lunch 
+		//It randomly generates a time between 0 - 60 minutes for time for lunch.
 		int randomLunchTime = randomGen.nextInt(60 - 30 + 1) + 30;
 		devLunchTime = TimeUnit.NANOSECONDS.convert(randomLunchTime, TimeUnit.MINUTES);
 	}
