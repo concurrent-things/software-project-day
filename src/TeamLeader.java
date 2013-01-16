@@ -4,7 +4,7 @@ public class TeamLeader extends Employee{
 	
 	public TeamLeader(Scheduler scheduler, Manager manager, int teamNumber, int teamMemberNumber) {
 		super(scheduler, manager);
-		
+		this.setName("" + teamNumber + teamMemberNumber);
 		initRunnables();
 		registerDaysEvents(scheduler);
 	}

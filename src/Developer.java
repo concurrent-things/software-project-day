@@ -29,8 +29,9 @@ public class Developer extends Employee{
 	 * @param teamMemberNumber
 	 */
 	public Developer(Scheduler scheduler, TeamLeader teamLeader, int teamNumber, int teamMemberNumber) { 
-		
 		super(scheduler, teamLeader);
+		this.setName("" + teamNumber + teamMemberNumber);
+
 		this.teamNumber = teamNumber; 
 		this.teamMemberNumber = teamMemberNumber; 
 		
