@@ -16,6 +16,11 @@ public class Developer extends Employee{
 	private long devDayEndTime; 
 	private long devLunchStart;
 	
+	protected Runnable endOfDayLeave;
+	protected Runnable goToLunch;
+	protected Runnable goToEndofDayMeeting;
+	
+	
 	/**
 	 * Developer Object Contructor 
 	 * @param scheduler
@@ -35,42 +40,44 @@ public class Developer extends Employee{
 		
 	}
 	
-	//Runnables 
-	final protected Runnable endOfDayLeave = new Runnable() {
+	@Override
+	protected void initRunnables() {
+		endOfDayLeave = new Runnable() {
 
-		public void run() {
-			System.out.println("Developer " + teamNumber + teamMemberNumber + " is leaving work.");
-			
-			//Throw an interrupt which states that this developer thread can now be terminated
-			//as the developer has now left. 
-			interrupt();
-		} 
-	};
-	
-	
-	final protected Runnable goToLunch = new Runnable() { 
+			public void run() {
+				System.out.println("Developer " + teamNumber + teamMemberNumber + " is leaving work.");
+				
+				//Throw an interrupt which states that this developer thread can now be terminated
+				//as the developer has now left. 
+				interrupt();
+			} 
+		};
 		
-		public void run() { 
+		goToLunch = new Runnable() { 
 			
-			System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to lunch.");
-			try {
-				sleep(devLunchTime);
-			} catch (InterruptedException e) {
-				System.out.println("Exception found when developer trying to go to lunch.");
-				e.printStackTrace();
+			public void run() { 
+				
+				System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to lunch.");
+				try {
+					sleep(devLunchTime);
+				} catch (InterruptedException e) {
+					System.out.println("Exception found when developer trying to go to lunch.");
+					e.printStackTrace();
+				}
+				System.out.println("Developer " + teamNumber + teamMemberNumber + " has returned from lunch." );
 			}
-			System.out.println("Developer " + teamNumber + teamMemberNumber + " has returned from lunch." );
-		}
-	};
-	
-	final protected Runnable goToEndofDayMeeting = new Runnable() { 
+		};
 		
-		public void run() { 
+		goToEndofDayMeeting = new Runnable() { 
 			
-			
-			System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to the end of the day meeting at conference room.");
-		}
-	};
+			public void run() { 
+				
+				
+				System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to the end of the day meeting at conference room.");
+			}
+		};
+	}
+	
 	
 	/** 
 	 * Method that sets the simulated start time of the developer. 
