@@ -107,5 +107,11 @@ public class TeamLeader extends Employee{
 
 		System.out.println("Team Leader " + teamNumber + teamMemberNumber + " received an answer.");		
 		
+	}
+
+	@Override
+	protected void initRunnables() {
+		// TODO Auto-generated method stub
+		
 	}	
 }

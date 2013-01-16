@@ -16,6 +16,11 @@ public class Developer extends Employee{
 	private long devDayEndTime; 
 	private long devLunchStart;
 	
+	protected Runnable endOfDayLeave;
+	protected Runnable goToLunch;
+	protected Runnable goToEndofDayMeeting;
+	
+	
 	/**
 	 * Developer Object Contructor 
 	 * @param scheduler
@@ -24,44 +29,56 @@ public class Developer extends Employee{
 	 * @param teamMemberNumber
 	 */
 	public Developer(Scheduler scheduler, TeamLeader teamLeader, int teamNumber, int teamMemberNumber) { 
-		
 		super(scheduler, teamLeader);
+		this.setName("" + teamNumber + teamMemberNumber);
+
 		this.teamNumber = teamNumber; 
 		this.teamMemberNumber = teamMemberNumber; 
 		
-		// WARING: The registerDaysEvents hook will be called before
-		// anything in this constructor. Therefore Initialization of timing
-		// needs to happen in that method.
+		initRunnables();
+		registerDaysEvents(scheduler);
 		
 	}
 	
-	//Runnables 
-	final protected Runnable endOfDayLeave = new Runnable() {
+	@Override
+	protected void initRunnables() {
+		endOfDayLeave = new Runnable() {
 
-		public void run() {
-			System.out.println("Developer " + teamNumber + teamMemberNumber + " is leaving work.");
-			
-			//Throw an interrupt which states that this developer thread can now be terminated
-			//as the developer has now left. 
-			interrupt();
-		} 
-	};
-	
-	
-	final protected Runnable goToLunch = new Runnable() { 
+			public void run() {
+				System.out.println("Developer " + teamNumber + teamMemberNumber + " is leaving work.");
+				
+				//Throw an interrupt which states that this developer thread can now be terminated
+				//as the developer has now left. 
+				interrupt();
+			} 
+		};
 		
-		public void run() { 
+		goToLunch = new Runnable() { 
 			
-			System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to lunch.");
-			try {
-				sleep(devLunchTime);
-			} catch (InterruptedException e) {
-				System.out.println("Exception when developer trying to go to lunch.");
-				e.printStackTrace();
+			public void run() { 
+				
+				System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to lunch.");
+				try {
+					long devLunchTimeSleep = TimeUnit.MILLISECONDS.convert(devLunchTime, TimeUnit.NANOSECONDS);
+					sleep(devLunchTimeSleep);
+				} catch (InterruptedException e) {
+					System.out.println("Exception found when developer trying to go to lunch.");
+					e.printStackTrace();
+				}
+				System.out.println("Developer " + teamNumber + teamMemberNumber + " has returned from lunch." );
 			}
-			System.out.println("Developer " + teamNumber + teamMemberNumber + " has returned from lunch." );
-		}
-	};
+		};
+		
+		goToEndofDayMeeting = new Runnable() { 
+			
+			public void run() { 
+				
+				
+				System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to the end of the day meeting at conference room.");
+			}
+		};
+	}
+	
 	
 	/** 
 	 * Method that sets the simulated start time of the developer. 
@@ -77,11 +94,13 @@ public class Developer extends Employee{
 	private void scheduleRandomQuestion(Scheduler scheduler) {
 		
 		long timeToScheduleQuestions;
+		
 		//Generate random number of questions to ask max is 10 questions. 
 		Random randomGen = new Random(); 
 		int questionsToAsk = randomGen.nextInt(10);
 		
-		
+		//For the randomly generated number of questions to ask it generates 
+		//a random time to ask questions within the 8 hour work period. 
 		for (int i = 0; i < questionsToAsk; i++) { 
 		
 			timeToScheduleQuestions = randomGen.nextInt(8);
@@ -98,10 +117,12 @@ public class Developer extends Employee{
 		Random randomGen = new Random(); 
 		
 		//Randomly generating a time to go to lunch 
+		//It randomly selects a time between the hours of 12 and 1 in minutes. 
 		long randomLunchStartTime = randomGen.nextInt(250 - 240 + 1) + 240;
 		devLunchStart = TimeUnit.NANOSECONDS.convert(randomLunchStartTime, TimeUnit.MINUTES);
 		
 		//Randomly generating total timefor lunch 
+		//It randomly generates a time between 0 - 60 minutes for time for lunch.
 		int randomLunchTime = randomGen.nextInt(60 - 30 + 1) + 30;
 		devLunchTime = TimeUnit.NANOSECONDS.convert(randomLunchTime, TimeUnit.MINUTES);
 	}
@@ -136,6 +157,8 @@ public class Developer extends Employee{
 
 	protected void registerDaysEvents(Scheduler scheduler) {
 		
+		long endofDayMeeting = TimeUnit.NANOSECONDS.convert(8, TimeUnit.HOURS);
+		
 		//Register days event with scheduler. 
 		startDevTime();
 		scheduleRandomQuestion(scheduler);
@@ -143,6 +166,7 @@ public class Developer extends Employee{
 		calculateDevEndTime();
 		scheduler.registerEvent(endOfDayLeave, this, devDayEndTime);
 		scheduler.registerEvent(goToLunch, this, devLunchStart);
+		scheduler.registerEvent(goToEndofDayMeeting, this, endofDayMeeting);
 	}
 
 	/** 
