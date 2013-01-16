@@ -1,13 +1,13 @@
 public class Main {
 	public static final int POOLS_MAX_THREADS = 5;
-
+	public static final int NUM_TEAM_LEADERS = 3;
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		Scheduler scheduler = new Scheduler(POOLS_MAX_THREADS);
 		
-		Manager manager1 = new Manager(scheduler);
+		Manager manager1 = new Manager(scheduler, NUM_TEAM_LEADERS);
 		manager1.start();
 
 		// 3 teams of developers consisting of 1 lead and 3 devs

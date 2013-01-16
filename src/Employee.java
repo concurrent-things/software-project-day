@@ -201,4 +201,8 @@ public abstract class Employee extends Thread {
 		if (!isBlocking) return;
 		blockProcessing.release();
 	}
+	
+	public Employee getSupervisor() {
+		return this.supervisor;
+	}
 }

@@ -5,7 +5,7 @@
  */
 
 public class Manager extends Employee{
-
+	private final Office office;
 	//how long, in ms, it takes to complete various tasks
 	private long manLunchTime = 600L; 
 	private long manExecMeetTime = 600L;
@@ -33,9 +33,10 @@ public class Manager extends Employee{
 	/**
 	 * 
 	 */
-	public Manager(Scheduler scheduler){
+	public Manager(Scheduler scheduler, int numTeamLeads){
 		super(scheduler, null);
 		registerDaysEvents(scheduler);
+		this.office = new Office(numTeamLeads, this);
 	}
 
 	@Override
