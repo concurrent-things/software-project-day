@@ -59,7 +59,8 @@ public class Developer extends Employee{
 				
 				System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to lunch.");
 				try {
-					sleep(devLunchTime);
+					long devLunchTimeSleep = TimeUnit.MILLISECONDS.convert(devLunchTime, TimeUnit.NANOSECONDS);
+					sleep(devLunchTimeSleep);
 				} catch (InterruptedException e) {
 					System.out.println("Exception found when developer trying to go to lunch.");
 					e.printStackTrace();
