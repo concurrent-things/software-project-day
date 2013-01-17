@@ -39,7 +39,7 @@ public class Manager extends Employee{
 	public Manager(Scheduler scheduler, int numTeamLeads){
 		super(scheduler, null);
 		this.setName("Manager");
-		this.office = new Office(numTeamLeads, this);
+		this.office = new Office(numTeamLeads + 1, this);
 		initRunnables();
 		registerDaysEvents(scheduler);
 	}
