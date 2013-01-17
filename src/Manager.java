@@ -1,29 +1,33 @@
 /**
- * 
+ * Class for the Manager of the Software Project Day project.  Manager answers
+ * team leader questions, holds meetings, goes to meetings, and goes to lunch,
+ * and when not doing those things, does whatever managers do.
  *
  * @author Jonathon Shippling <jjs5471@rit.edu>
  */
 
 public class Manager extends Employee{
+	// The manager's own office
 	private final Office office;
+	
+	//The conference room for the morning meeting
 	//private final ConferenceRoom conferenceRoom;
+	
 	//how long, in ms, it takes to complete various tasks
 	private long manLunchTime = 600L; 
 	private long manExecMeetTime = 600L;
 	
-	// The earliest time a manager can begin a task
-	private long manDevMeetStart = 0L;			//8:00 am, waits in office for
-												//all leaders to arrive by 8:30
-	
+	// The earliest time a manager can begin a task, in ns
+	private long manDevMeetStart = 0L;				//8:00 am, waits in office for
+													//all leaders to arrive by 8:30
 	private long manExecMeet1Start = 1200000000L; 	//10:00 am, unless a question is in his queue
 	private long manLunchStart = 2400000000L; 		//12:00 pm, unless a question is in his queue
 	private long manExecMeet2Start = 3600000000L;	//2:00 pm, unless a question is in his queue
-	
 	private long manStatusMeetStart = 4800000000L;	//4:00 pm, waits in conference room for
 													//all team members to arrive by 4:15
-	
 	private long manEndDayStart = 5400000000L;		//5:00 pm, unless a question in in	 his queue
 	
+	// The runnables scheduled
 	protected Runnable goToDevMeeting;
 	protected Runnable goToExecMeeting;
 	protected Runnable goToLunch; 
@@ -44,6 +48,9 @@ public class Manager extends Employee{
 		registerDaysEvents(scheduler);
 	}
 
+	/**
+	 * Initialization of the Manager's runnables for scheduling
+	 */
 	@Override
 	protected void initRunnables() {
 		
@@ -118,6 +125,9 @@ public class Manager extends Employee{
 		};
 	}	
 	
+	/**
+	 * Manager registering his runnables with the scheduler
+	 */
 	@Override
 	protected void registerDaysEvents(Scheduler scheduler) {
 		scheduler.registerEvent(goToDevMeeting, this, manDevMeetStart);
@@ -129,19 +139,27 @@ public class Manager extends Employee{
 
 	}
 
+	/**
+	 * Returns the Manager's office
+	 * 
+	 * @return
+	 */
 	public Office getOffice(){
 		return office;
 	}
 	
-	private void startManagerTime(){
-		// TODO do something?
-	}
-	
+	/**
+	 * The manager is able to answer questions always
+	 */
 	@Override
 	protected boolean canAnswerQuestion() {
 		return true;
 	}
 
+	/**
+	 * Manager receives the question and then sleeps for the appropriate 
+	 * amount of time
+	 */
 	@Override
 	protected void onQuestionAsked(Employee askedTo) {
 		System.out.println("Manager received a question from "+askedTo.getName());
@@ -154,9 +172,11 @@ public class Manager extends Employee{
 		
 	}
 
+	/**
+	 * Managers never receive answers, only ask questions
+	 */
 	@Override
 	protected void onAnswerReceived(Employee receivedFrom) {
-		// Managers never receive answers, only ask questions
 		return;
 	}
 
