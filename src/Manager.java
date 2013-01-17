@@ -130,12 +130,12 @@ public class Manager extends Employee{
 	 */
 	@Override
 	protected void registerDaysEvents(Scheduler scheduler) {
-		scheduler.registerEvent(goToDevMeeting, this, manDevMeetStart);
-		scheduler.registerEvent(goToExecMeeting, this, manExecMeet1Start);
-		scheduler.registerEvent(goToLunch, this, manLunchStart);
-		scheduler.registerEvent(goToExecMeeting, this, manExecMeet2Start);
-		scheduler.registerEvent(goToStatusUpdateMeeting, this, manStatusMeetStart);
-		scheduler.registerEvent(endOfDayLeave, this, manEndDayStart);
+		scheduler.registerEvent(goToDevMeeting, this, manDevMeetStart, false);
+		scheduler.registerEvent(goToExecMeeting, this, manExecMeet1Start, false);
+		scheduler.registerEvent(goToLunch, this, manLunchStart, false);
+		scheduler.registerEvent(goToExecMeeting, this, manExecMeet2Start, false);
+		scheduler.registerEvent(goToStatusUpdateMeeting, this, manStatusMeetStart, false);
+		scheduler.registerEvent(endOfDayLeave, this, manEndDayStart, true);
 
 	}
 
@@ -178,6 +178,12 @@ public class Manager extends Employee{
 	@Override
 	protected void onAnswerReceived(Employee receivedFrom) {
 		return;
+	}
+
+	@Override
+	protected void onQuestionCancelled(Employee notAvailable) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

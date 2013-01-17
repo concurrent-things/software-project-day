@@ -1,11 +1,6 @@
 import java.util.Random;
 
-public class TeamLeader extends Employee{
-	private int teamNumber;
-	private int teamMemberNumber;
-	
-	private Runnable endOfDayLeave;
-	
+public class TeamLeader extends Employee{	
 	private int teamNumber;
 	private int teamMemberNumber;
 	private long lunchTime;
