@@ -7,57 +7,62 @@ public class TeamLeader extends Employee{
 	private long lunchTime;
 	private Developer[] team;
 	
-	final protected Runnable goToLunch = new Runnable() {
+	protected Runnable goToLunch;
+	protected Runnable endOfDayLeave;
+	protected Runnable standUpMeeting;
+	protected Runnable teamSchedulingMeeting;
+
+
+	protected void initRunnables() {
+		// TODO Auto-generated method stub
+	
+		goToLunch = new Runnable() {
+			
+			public void run() {
+				try {
+	
+					System.out.println("Team Leader " + teamNumber + teamMemberNumber + " is going to lunch.");
+					
+					Thread.sleep(lunchTime);
+	
+					System.out.println("Team Leader " + teamNumber + teamMemberNumber + " has returned from lunch." );
+					
+				} catch (InterruptedException e) {
+					
+				}
+			}
+		};
 		
-		public void run() {
-			try {
-
-				System.out.println("Developer " + teamNumber + teamMemberNumber + " is going to lunch.");
-				
-				Thread.sleep(lunchTime);
-
-				System.out.println("Developer " + teamNumber + teamMemberNumber + " has returned from lunch." );
-				
-			} catch (InterruptedException e) {
+		endOfDayLeave = new Runnable() {
+	
+			public void run() {
+				System.out.println("Team Leader " + teamNumber + teamMemberNumber + " is leaving work.");
+				//Throw an interrupt which states that this developer thread can now be terminated
+				//as the developer has now left. 
+				interrupt();
+			} 
+		};
+		
+		teamSchedulingMeeting = new Runnable() {
+	
+			public void run() {
+				System.out.println("Team Leader " + teamNumber + teamMemberNumber + " had the scheduling meeting.");
+				//conferenceRoom.enterRoom()
 				
 			}
-		}
-	};
-	
-	final protected Runnable endOfDayLeave = new Runnable() {
-
-		public void run() {
-			System.out.println("Developer " + teamNumber + teamMemberNumber + " is leaving work.");
-			//Throw an interrupt which states that this developer thread can now be terminated
-			//as the developer has now left. 
-			interrupt();
-		} 
-	};
-	
-	final protected Runnable teamSchedulingMeeting = new Runnable() {
-
-		public void run() {
-
-			//grab all employees in team
 			
-			//acquire lock for conference room
+		};
+		
+		standUpMeeting = new Runnable() {
 			
-			//have meeting
-			try{
+			public void run() {
 				
-				Thread.sleep(0);
-				
-			}catch(Exception e){
+				((Manager)getSupervisor()).getOffice().enterRoom();
 				
 			}
 			
-			//release team
-			
-			//release conference room lock
-			
-		}
-		
-	};
+		};
+	}
 	
 	public TeamLeader(Scheduler scheduler, Manager manager, int teamNumber, int teamMemberNumber) {
 		
@@ -79,12 +84,15 @@ public class TeamLeader extends Employee{
 	@Override
 	protected void registerDaysEvents(Scheduler scheduler) {
 		
-		lunchTime = (long) (300 + 300 * Math.random());
+		lunchTime = (long) (300000000 + 300000000 * Math.random());
 		
-		long leaveTime = 4800 + lunchTime;
+		long leaveTime = 4800000000L + lunchTime;
 		
 		scheduler.registerEvent(endOfDayLeave, this, leaveTime);
-		scheduler.registerEvent(goToLunch, this, (long)(600 * 4 + 600 * Math.random()));
+		scheduler.registerEvent(goToLunch, this, (long)(2400000000L + 600000000 * Math.random()));
+		scheduler.registerEvent(standUpMeeting, this, 0);
+		scheduler.registerEvent(teamSchedulingMeeting, this, 200000000);
+		//scheduler.registerEvent(teamSchedulingMeeting, this, 4800000000L);
 		
 		//can ask up to 3 questions a day
 		int numQuestions = (int)(3 * Math.random());
@@ -101,20 +109,15 @@ public class TeamLeader extends Employee{
 	@Override
 	protected void onQuestionAsked(Employee askedTo) {
 
-		System.out.println("Team Leader " + teamNumber + teamMemberNumber + " answered a question.");	
+		System.out.println("Team Leader " + this.getName() + " asked " + askedTo.getName() + "a question.");	
 		
 	}
 
 	@Override
 	protected void onAnswerReceived(Employee receivedFrom) {
 
-		System.out.println("Team Leader " + teamNumber + teamMemberNumber + " received an answer.");		
+		System.out.println("Team Leader " + this.getName() + " received an answer from " + receivedFrom.getName() + ".");		
 		
 	}
-
-	@Override
-	protected void initRunnables() {
-		// TODO Auto-generated method stub
-		
-	}	
+	
 }
