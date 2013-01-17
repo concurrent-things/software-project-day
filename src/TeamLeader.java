@@ -89,10 +89,10 @@ public class TeamLeader extends Employee{
 		
 		long leaveTime = 4800000000L + lunchTime;
 		
-		scheduler.registerEvent(endOfDayLeave, this, leaveTime);
-		scheduler.registerEvent(goToLunch, this, (long)(2400000000L + 600000000 * Math.random()));
-		scheduler.registerEvent(standUpMeeting, this, 0);
-		scheduler.registerEvent(teamSchedulingMeeting, this, 200000000);
+		scheduler.registerEvent(endOfDayLeave, this, leaveTime, true);
+		scheduler.registerEvent(goToLunch, this, (long)(2400000000L + 600000000 * Math.random()), false);
+		scheduler.registerEvent(standUpMeeting, this, 0, false);
+		scheduler.registerEvent(teamSchedulingMeeting, this, 200000000, false);
 		//scheduler.registerEvent(teamSchedulingMeeting, this, 4800000000L);
 		
 		//can ask up to 3 questions a day
@@ -100,7 +100,7 @@ public class TeamLeader extends Employee{
 		
 		for (int i = 0; i < numQuestions; i++){
 			
-			scheduler.registerEvent(askQuestion, this, (long)(Math.random() * leaveTime));
+			scheduler.registerEvent(askQuestion, this, (long)(Math.random() * leaveTime), false);
 			
 		}
 	}
@@ -115,6 +115,12 @@ public class TeamLeader extends Employee{
 	@Override
 	protected void onAnswerReceived(Employee receivedFrom) {
 		System.out.println("Team Leader " + this.getName() + " received an answer from " + receivedFrom.getName() + ".");		
+	}
+
+	@Override
+	protected void onQuestionCancelled(Employee notAvailable) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
