@@ -13,8 +13,7 @@ public class Office extends MeetingPlace {
 		try {
 			Thread.sleep(150L);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
 	}
 
