@@ -167,13 +167,13 @@ public class Manager extends Employee{
 	 */
 	@Override
 	protected void onQuestionAsked(Employee askedTo) {
-		System.out.println("Manager received a question from "+askedTo.getName());
+		System.out.println("Manager received a question.");
 		try {
 			Thread.sleep(100L);
 		} catch (InterruptedException e) {
 
 		}
-		System.out.println("Manager answered a question from "+askedTo.getName());
+		System.out.println("Manager answered a question.");
 		
 	}
 
