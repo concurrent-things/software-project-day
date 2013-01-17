@@ -185,10 +185,12 @@ public class Manager extends Employee{
 		return;
 	}
 
+	/**
+	 * Should never be called as a manager as he doesn't ask questions
+	 */
 	@Override
 	protected void onQuestionCancelled(Employee notAvailable) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 

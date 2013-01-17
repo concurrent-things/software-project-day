@@ -119,8 +119,8 @@ public class TeamLeader extends Employee{
 
 	@Override
 	protected void onQuestionCancelled(Employee notAvailable) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Team Leader "+this.getName()+"'s question was " +
+				"cancelled, "+notAvailable.getName()+" is not available");
 	}
 	
 }
