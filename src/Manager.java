@@ -11,7 +11,8 @@ public class Manager extends Employee{
 	private final Office office;
 	
 	//The conference room for the morning meeting
-	//private final ConferenceRoom conferenceRoom;
+	private final ConferenceRoom conferenceRoom;
+	private final AfternoonConferenceRoom afternoonConferenceRoom;
 	
 	//how long, in ms, it takes to complete various tasks
 	private long manLunchTime = 600L; 
@@ -25,7 +26,7 @@ public class Manager extends Employee{
 	private long manExecMeet2Start = 3600000000L;	//2:00 pm, unless a question is in his queue
 	private long manStatusMeetStart = 4800000000L;	//4:00 pm, waits in conference room for
 													//all team members to arrive by 4:15
-	private long manEndDayStart = 5400000000L;		//5:00 pm, unless a question in in	 his queue
+	private long manEndDayStart = 5400000000L;		//5:00 pm, unless a question in in his queue
 	
 	// The runnables scheduled
 	protected Runnable goToDevMeeting;
@@ -40,10 +41,13 @@ public class Manager extends Employee{
 	 * @param scheduler the lone event scheduler
 	 * @param numTeamLeads the number of team leaders
 	 */
-	public Manager(Scheduler scheduler, int numTeamLeads){
+	public Manager(Scheduler scheduler, int numTeamLeads, ConferenceRoom 
+			conferenceRoom, AfternoonConferenceRoom afternoonConferenceRoom){
 		super(scheduler, null);
 		this.setName("Manager");
 		this.office = new Office(numTeamLeads + 1, this);
+		this.conferenceRoom = conferenceRoom;
+		this.afternoonConferenceRoom = afternoonConferenceRoom;
 		initRunnables();
 		registerDaysEvents(scheduler);
 	}
@@ -106,6 +110,7 @@ public class Manager extends Employee{
 			public void run() {
 				System.out.println("Manager goes to the project status update"+
 						" meeting");
+				afternoonConferenceRoom.enterRoom();
 				// TODO enter the afternoon conference meeting room
 			}
 
