@@ -1,3 +1,5 @@
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -15,15 +17,26 @@ public class Scheduler extends ScheduledThreadPoolExecutor {
 	}
 	
 	
-	public void registerEvent(final Runnable event, final Employee employee, long nanosFromNow) {
-		this.schedule(new Runnable(){
+	public boolean registerEvent(final Runnable event, 
+			final Employee employee, long nanosFromNow, final boolean lastTask) {
+		try {
+			return this.schedule(new Callable<Boolean>(){
 
-			@Override
-			public void run() {
-				employee.enqueueTask(event);
-			}
-			
-		}, nanosFromNow, TimeUnit.NANOSECONDS);
+				@Override
+				public Boolean call() {
+					return employee.enqueueTask(event, lastTask);
+				}
+				
+			}, nanosFromNow, TimeUnit.NANOSECONDS).get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+		
 	}
 	
 	public long getStartTimeInNanos() {
