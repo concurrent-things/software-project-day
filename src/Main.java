@@ -16,15 +16,15 @@ public class Main {
 		for (int i = 1; i <= 3; i++) {
 			TeamLeader teamLead = new TeamLeader(scheduler, manager1, i, 1);
 			teamLead.start();
-//			
-//			Developer dev1 = new Developer(scheduler, teamLead, i, 2);
-//			dev1.start();
-//			
-//			Developer dev2 = new Developer(scheduler, teamLead, i, 3);
-//			dev2.start();
-//			
-//			Developer dev3 = new Developer(scheduler, teamLead, i, 4);
-//			dev3.start();
+			
+			Developer dev1 = new Developer(scheduler, teamLead, i, 2);
+			dev1.start();
+			
+			Developer dev2 = new Developer(scheduler, teamLead, i, 3);
+			dev2.start();
+			
+			Developer dev3 = new Developer(scheduler, teamLead, i, 4);	
+			dev3.start();
 		}
 		
 	}
