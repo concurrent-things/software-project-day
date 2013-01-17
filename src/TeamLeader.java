@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class TeamLeader extends Employee{	
 	private int teamNumber;
@@ -36,7 +37,7 @@ public class TeamLeader extends Employee{
 	
 			public void run() {
 				System.out.println("Team Leader " + teamNumber + teamMemberNumber + " is leaving work.");
-				//Throw an interrupt which states that this developer thread can now be terminated
+				//Throw an interrupt which states that this team leader thread can now be terminated
 				//as the developer has now left. 
 				interrupt();
 			} 
@@ -84,15 +85,26 @@ public class TeamLeader extends Employee{
 
 	@Override
 	protected void registerDaysEvents(Scheduler scheduler) {
+
+		long endofDayMeeting = TimeUnit.NANOSECONDS.convert(4800, TimeUnit.MILLISECONDS);
 		
-		lunchTime = (long) (300000000 + 300000000 * Math.random());
+		Random randomGen = new Random();
 		
-		long leaveTime = 4800000000L + lunchTime;
+		//Randomly generating a time to go to lunch 
+		//It randomly selects a time between the hours of 12 and 1 in minutes. 
+		long randomlunchTime = randomGen.nextInt(3000 - 2400 + 1) + 2400;
+		long devLunchStart = TimeUnit.NANOSECONDS.convert(randomlunchTime, TimeUnit.MILLISECONDS);
+
+		lunchTime = randomGen.nextInt(600 - 300 + 1) + 300;
+		lunchTime = TimeUnit.NANOSECONDS.convert(lunchTime, TimeUnit.MILLISECONDS);
+		
+		long leaveTime = 4800 + lunchTime;
+		leaveTime = TimeUnit.NANOSECONDS.convert(leaveTime, TimeUnit.MILLISECONDS);
 		
 		scheduler.registerEvent(endOfDayLeave, this, leaveTime, true);
-		scheduler.registerEvent(goToLunch, this, (long)(2400000000L + 600000000 * Math.random()), false);
+		scheduler.registerEvent(goToLunch, this, devLunchStart, false);
 		scheduler.registerEvent(standUpMeeting, this, 0, false);
-		scheduler.registerEvent(teamSchedulingMeeting, this, 200000000, false);
+		scheduler.registerEvent(teamSchedulingMeeting, this, endofDayMeeting, false);
 		//scheduler.registerEvent(teamSchedulingMeeting, this, 4800000000L);
 		
 		//can ask up to 3 questions a day
