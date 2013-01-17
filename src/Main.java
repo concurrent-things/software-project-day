@@ -6,8 +6,10 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		Scheduler scheduler = new Scheduler(POOLS_MAX_THREADS);
+		ConferenceRoom conferenceRoom = new ConferenceRoom(4);
+		AfternoonConferenceRoom afternoonCR = new AfternoonConferenceRoom(13);
 		
-		Manager manager1 = new Manager(scheduler, NUM_TEAM_LEADERS);
+		Manager manager1 = new Manager(scheduler, NUM_TEAM_LEADERS, conferenceRoom, afternoonCR);
 		manager1.start();
 
 		// 3 teams of developers consisting of 1 lead and 3 devs
