@@ -186,7 +186,7 @@ public class Developer extends Employee{
 
 	@Override
 	protected void onQuestionCancelled(Employee notAvailable) {
-		// TODO Auto-generated method stub
 		
+		System.out.println("Question asked to: " + notAvailable.getName()+  " has been cancelled.");
 	}
 }
