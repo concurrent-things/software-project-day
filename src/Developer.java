@@ -108,7 +108,7 @@ public class Developer extends Employee{
 		
 			timeToScheduleQuestions = randomGen.nextInt(4800);
 			timeToScheduleQuestions = TimeUnit.NANOSECONDS.convert(timeToScheduleQuestions, TimeUnit.MILLISECONDS);
-			scheduler.registerEvent(askQuestion, this, timeToScheduleQuestions);
+			scheduler.registerEvent(askQuestion, this, timeToScheduleQuestions, true);
 		}
 	}
 	
@@ -167,9 +167,9 @@ public class Developer extends Employee{
 		scheduleRandomQuestion(scheduler);
 		calculateDevLunch();
 		calculateDevEndTime();
-		scheduler.registerEvent(endOfDayLeave, this, devDayEndTime);
-		scheduler.registerEvent(goToLunch, this, devLunchStart);
-		scheduler.registerEvent(goToEndofDayMeeting, this, endofDayMeeting);
+		scheduler.registerEvent(endOfDayLeave, this, devDayEndTime, true);
+		scheduler.registerEvent(goToLunch, this, devLunchStart, false);
+		scheduler.registerEvent(goToEndofDayMeeting, this, endofDayMeeting, false);
 	}
 
 	/** 
@@ -182,5 +182,11 @@ public class Developer extends Employee{
 	protected void onAnswerReceived(Employee receivedFrom) {
 		
 		System.out.println("Recieved an answer to question from " + receivedFrom.getName());
+	}
+
+	@Override
+	protected void onQuestionCancelled(Employee notAvailable) {
+		// TODO Auto-generated method stub
+		
 	}
 }
