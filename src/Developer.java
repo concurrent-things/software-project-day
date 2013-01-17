@@ -100,7 +100,7 @@ public class Developer extends Employee{
 		
 		//Generate random number of questions to ask max is 10 questions. 
 		Random randomGen = new Random(); 
-		int questionsToAsk = randomGen.nextInt(10);
+		int questionsToAsk = randomGen.nextInt(2);
 		
 		//For the randomly generated number of questions to ask it generates 
 		//a random time to ask questions within the 8 hour work period. 
@@ -108,7 +108,7 @@ public class Developer extends Employee{
 		
 			timeToScheduleQuestions = randomGen.nextInt(4800);
 			timeToScheduleQuestions = TimeUnit.NANOSECONDS.convert(timeToScheduleQuestions, TimeUnit.MILLISECONDS);
-			scheduler.registerEvent(askQuestion, this, timeToScheduleQuestions, true);
+			scheduler.registerEvent(askQuestion, this, timeToScheduleQuestions, false);
 		}
 	}
 	
@@ -176,7 +176,7 @@ public class Developer extends Employee{
 	 * Not required for developer. 
 	 */
 	protected void onQuestionAsked(Employee askedTo) {
-		
+		System.out.println("Developer " + teamNumber + teamMemberNumber + " asked a question to team leader " + askedTo.getName());
 	}
 
 	protected void onAnswerReceived(Employee receivedFrom) {

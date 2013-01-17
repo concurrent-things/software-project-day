@@ -14,11 +14,10 @@ public abstract class Employee extends Thread {
 	private ConcurrentLinkedQueue<Runnable> activeTaskQueue = new ConcurrentLinkedQueue<Runnable>();
 	private Scheduler scheduler;
 	private final Object newItemLock = new Object();
-	
-	private boolean isFinished = false;
-	
+		
 	private final Semaphore binarySemaphore = new Semaphore(1);
 	private final Semaphore blockProcessing = new Semaphore(1);
+	private final Object advancingLock = new Object();
 	private boolean isBlocking = false;
 	
 	// Runnables
@@ -27,7 +26,8 @@ public abstract class Employee extends Thread {
 		@Override
 		public void run() {
 			if (supervisor == null) return;
-			Employee.this.lockProcessing();
+			//Employee.this.lockProcessing();
+			
 			if (supervisor.registerSpontaneousTask(new Runnable() {
 
 				@Override
@@ -41,8 +41,14 @@ public abstract class Employee extends Thread {
 				Employee.this.onQuestionAsked(Employee.this.supervisor);
 			} else {
 				Employee.this.onQuestionCancelled(Employee.this.supervisor);
-				unlockProcessing();
+				//unlockProcessing();
 			}
+			synchronized (advancingLock) { try {
+				advancingLock.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} }
 		}
 	};
 	
@@ -74,6 +80,8 @@ public abstract class Employee extends Thread {
 	}
 	
 	final public void askQuestion(final Stack<Employee> relayedFrom) {
+		Employee.this.onQuestionAsked(supervisor);
+
 		if (supervisor == null || canAnswerQuestion()) {
 			relayedFrom.peek().resumeWithAnswer(new Runnable() {  //TODO: double check for bugs
 
@@ -82,36 +90,31 @@ public abstract class Employee extends Thread {
 					relayedFrom.pop().listenToAnswer(relayedFrom);
 				}
 			});
-			Employee.this.onQuestionAsked(supervisor);
 			return;
 		}
 		
 		
-		Employee.this.lockProcessing();
+//		Employee.this.lockProcessing();
 		
-		if (supervisor.registerSpontaneousTask(new Runnable() {
+		supervisor.registerSpontaneousTask(new Runnable() {
 
 			@Override
 			public void run() {
 				relayedFrom.push(Employee.this);
 				supervisor.askQuestion(relayedFrom);
 			}
-		})) {
-			Employee.this.onQuestionAsked(supervisor);
+		});
+		
+		Employee.this.onQuestionAsked(supervisor);
 
-		} else {
-			Employee.this.unlockProcessing();
-			Employee.this.onQuestionCancelled(supervisor);
-			relayedFrom.peek().resumeWithAnswer(new Runnable() {
-
-				@Override
-				public void run() {
-					relayedFrom.pop().onQuestionCancelled(supervisor);
-					
-				}
-				
-			});
-		}
+		
+		synchronized (advancingLock) { try {
+			advancingLock.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} }
+		
 	}
 	
 	final public void listenToAnswer(final Stack<Employee> relayTo) {
@@ -141,12 +144,6 @@ public abstract class Employee extends Thread {
 
 		synchronized (newItemLock) {
 			try {
-				if (this.isFinished) {
-					binarySemaphore.release();
-					newItemLock.notify();
-					return false;
-				}
-				this.isFinished = lastTask;
 				activeTaskQueue.offer(newActiveTask);
 				binarySemaphore.release();
 				newItemLock.notify();
@@ -168,7 +165,7 @@ public abstract class Employee extends Thread {
 	final public void resumeWithAnswer(Runnable answer) {
 		try {
 			binarySemaphore.acquire();
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			System.err.println("The scheduler thread has been unexpectedly interrupted.");
 			return;
 		}
@@ -179,13 +176,14 @@ public abstract class Employee extends Thread {
 			queueBackup.offer(activeTaskQueue.poll());
 		}
 		
-		activeTaskQueue.offer(answer);
+		enqueueTask(answer, false);
 		
 		while (!queueBackup.isEmpty()) {
-			activeTaskQueue.offer(queueBackup.poll());
+			enqueueTask(queueBackup.poll(), false);
 		}
-		
-		unlockProcessing();
+		synchronized (this.advancingLock) {
+			this.advancingLock.notify();
+		}
 	}
 	
 	protected abstract void registerDaysEvents(Scheduler scheduler);
@@ -195,9 +193,7 @@ public abstract class Employee extends Thread {
 			while (true) {	
 				boolean mustRelease = false;
 				while (!activeTaskQueue.isEmpty()) {
-					blockProcessing.acquire(); // try catch finally
 					activeTaskQueue.poll().run();
-					blockProcessing.release();
 					
 					binarySemaphore.acquire();
 					if (activeTaskQueue.size() == 0) {
