@@ -6,14 +6,14 @@
 
 public class Manager extends Employee{
 	private final Office office;
+	//private final ConferenceRoom conferenceRoom;
 	//how long, in ms, it takes to complete various tasks
 	private long manLunchTime = 600L; 
 	private long manExecMeetTime = 600L;
-	private long manStatusMeetTime = 150L;
 	
-	// These longs represent the earliest time a manager can begin a task
+	// The earliest time a manager can begin a task
 	private long manDevMeetStart = 0L;			//8:00 am, waits in office for
-													//all leaders to arrive by 8:30
+												//all leaders to arrive by 8:30
 	
 	private long manExecMeet1Start = 1200000000L; 	//10:00 am, unless a question is in his queue
 	private long manLunchStart = 2400000000L; 		//12:00 pm, unless a question is in his queue
@@ -22,7 +22,7 @@ public class Manager extends Employee{
 	private long manStatusMeetStart = 4800000000L;	//4:00 pm, waits in conference room for
 													//all team members to arrive by 4:15
 	
-	private long manEndDayTime = 5400000000L;		//5:00 pm, unless a question in in	 his queue
+	private long manEndDayStart = 5400000000L;		//5:00 pm, unless a question in in	 his queue
 	
 	protected Runnable goToDevMeeting;
 	protected Runnable goToExecMeeting;
@@ -31,7 +31,10 @@ public class Manager extends Employee{
 	protected Runnable endOfDayLeave;
 	
 	/**
+	 * Constructor for the Manager
 	 * 
+	 * @param scheduler the lone event scheduler
+	 * @param numTeamLeads the number of team leaders
 	 */
 	public Manager(Scheduler scheduler, int numTeamLeads){
 		super(scheduler, null);
@@ -43,6 +46,10 @@ public class Manager extends Employee{
 
 	@Override
 	protected void initRunnables() {
+		
+		/**
+		 * Runnable for the developer meeting starting as early as 8am
+		 */
 		goToDevMeeting = new Runnable() {
 			@Override
 			public void run(){
@@ -63,48 +70,46 @@ public class Manager extends Employee{
 				} catch (InterruptedException e) {
 
 				}
-				System.out.println("Manager has left an Executive Meeting");
+				System.out.println("Manager left an Executive Meeting");
 			}
 		};
 		
+		/**
+		 * Runnable for the Manager's lunch time
+		 */
 		goToLunch = new Runnable(){
 			@Override
 			public void run() {
-				System.out.println("Manager is going to lunch");
+				System.out.println("Manager goes to lunch");
 				try {
 					Thread.sleep(manLunchTime);
 				} catch (InterruptedException e) {
 		
 				}
-				System.out.println("Manager has returned from lunch");
+				System.out.println("Manager returns from lunch");
 			}
 			
 		};
 		
 		/**
-		 * Runnable for the status update meeting taking place after 4 pm
+		 * Runnable for the status update meeting taking place as early as 4 pm
 		 */
 		goToStatusUpdateMeeting = new Runnable(){
 			@Override
 			public void run() {
-//				System.out.println("Manager is acquiring developers for the project"
-//						+ " status update meeting");
-//				// TODO acquire lock on conference room
-//				try {
-//					Thread.sleep(manStatusMeetTime);
-//				} catch (InterruptedException e) {
-//
-//				}
-//				System.out.println("Manager has adjourned project status update" +
-//						" meeting");
-				System.out.println("Manager is ");
+				System.out.println("Manager goes to the project status update"+
+						" meeting");
+				// TODO enter the afternoon conference meeting room
 			}
 
 		};
 		
+		/**
+		 * Runnable for the manager leaving at the end of the day
+		 */
 		endOfDayLeave = new Runnable() {
 			public void run() {
-				System.out.println("Manager is leaving work.");
+				System.out.println("Manager leaves work.");
 				
 				//Throw an interrupt which states that this developer thread can now be terminated
 				//as the developer has now left. 
@@ -119,8 +124,8 @@ public class Manager extends Employee{
 		scheduler.registerEvent(goToExecMeeting, this, manExecMeet1Start);
 		scheduler.registerEvent(goToLunch, this, manLunchStart);
 		scheduler.registerEvent(goToExecMeeting, this, manExecMeet2Start);
-		scheduler.registerEvent(goToStatusUpdateMeeting, this, manStatusMeetTime);
-		scheduler.registerEvent(endOfDayLeave, this, manEndDayTime);
+		scheduler.registerEvent(goToStatusUpdateMeeting, this, manStatusMeetStart);
+		scheduler.registerEvent(endOfDayLeave, this, manEndDayStart);
 
 	}
 

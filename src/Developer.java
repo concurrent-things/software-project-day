@@ -83,9 +83,12 @@ public class Developer extends Employee{
 	/** 
 	 * Method that sets the simulated start time of the developer. 
 	 */
-	private void startDevTime()  { 
+	private void startDevTime(Scheduler scheduler)  { 
 		
 		devDayStartTime = System.nanoTime();
+		long schedulerStartTime = scheduler.getStartTimeInNanos();
+		devDayStartTime = devDayStartTime - schedulerStartTime;
+		
 	}
 	
 	/** 
@@ -103,8 +106,8 @@ public class Developer extends Employee{
 		//a random time to ask questions within the 8 hour work period. 
 		for (int i = 0; i < questionsToAsk; i++) { 
 		
-			timeToScheduleQuestions = randomGen.nextInt(8);
-			timeToScheduleQuestions = TimeUnit.NANOSECONDS.convert(timeToScheduleQuestions, TimeUnit.HOURS);
+			timeToScheduleQuestions = randomGen.nextInt(4800);
+			timeToScheduleQuestions = TimeUnit.NANOSECONDS.convert(timeToScheduleQuestions, TimeUnit.MILLISECONDS);
 			scheduler.registerEvent(askQuestion, this, timeToScheduleQuestions);
 		}
 	}
@@ -118,13 +121,13 @@ public class Developer extends Employee{
 		
 		//Randomly generating a time to go to lunch 
 		//It randomly selects a time between the hours of 12 and 1 in minutes. 
-		long randomLunchStartTime = randomGen.nextInt(250 - 240 + 1) + 240;
-		devLunchStart = TimeUnit.NANOSECONDS.convert(randomLunchStartTime, TimeUnit.MINUTES);
+		long randomLunchStartTime = randomGen.nextInt(3000 - 2400 + 1) + 2400;
+		devLunchStart = TimeUnit.NANOSECONDS.convert(randomLunchStartTime, TimeUnit.MILLISECONDS);
 		
 		//Randomly generating total timefor lunch 
 		//It randomly generates a time between 0 - 60 minutes for time for lunch.
-		int randomLunchTime = randomGen.nextInt(60 - 30 + 1) + 30;
-		devLunchTime = TimeUnit.NANOSECONDS.convert(randomLunchTime, TimeUnit.MINUTES);
+		int randomLunchTime = randomGen.nextInt(600 - 300 + 1) + 300;
+		devLunchTime = TimeUnit.NANOSECONDS.convert(randomLunchTime, TimeUnit.MILLISECONDS);
 	}
 	
 	/**
@@ -157,10 +160,10 @@ public class Developer extends Employee{
 
 	protected void registerDaysEvents(Scheduler scheduler) {
 		
-		long endofDayMeeting = TimeUnit.NANOSECONDS.convert(8, TimeUnit.HOURS);
+		long endofDayMeeting = TimeUnit.NANOSECONDS.convert(4800, TimeUnit.MILLISECONDS);
 		
 		//Register days event with scheduler. 
-		startDevTime();
+		startDevTime(scheduler);
 		scheduleRandomQuestion(scheduler);
 		calculateDevLunch();
 		calculateDevEndTime();
