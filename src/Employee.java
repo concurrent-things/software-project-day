@@ -132,14 +132,13 @@ public abstract class Employee extends Thread {
 	final public boolean enqueueTask(Runnable newActiveTask, boolean lastTask) {
 		// TODO: check to see if we can enqueue		
 		
-		
 		try {
 			binarySemaphore.acquire();
 		} catch (InterruptedException e) {
 			System.err.println("The scheduler thread has been unexpectedly interrupted.");
 			return false;
 		}
-		
+
 		synchronized (newItemLock) {
 			try {
 				if (this.isFinished) {

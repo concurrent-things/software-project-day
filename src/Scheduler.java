@@ -19,23 +19,17 @@ public class Scheduler extends ScheduledThreadPoolExecutor {
 	
 	public boolean registerEvent(final Runnable event, 
 			final Employee employee, long nanosFromNow, final boolean lastTask) {
-		try {
-			return this.schedule(new Callable<Boolean>(){
+		
+			this.schedule(new Callable<Boolean>(){
 
 				@Override
 				public Boolean call() {
 					return employee.enqueueTask(event, lastTask);
 				}
 				
-			}, nanosFromNow, TimeUnit.NANOSECONDS).get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
+			}, nanosFromNow, TimeUnit.NANOSECONDS);
+		
+		return true;
 		
 	}
 	
